@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useUser, useClerk } from "@clerk/nextjs";
-import { FaXTwitter } from "react-icons/fa6";
 import {
   User,
   MessageSquare,
@@ -12,7 +11,11 @@ import {
   Settings,
   LogOut,
   X,
+  Gem,
 } from "lucide-react";
+
+import logo from "../../../../public/assets/logo.png";
+import Image from "next/image";
 
 /* ── NAV ITEMS ── */
 const sidebarNav = [
@@ -20,7 +23,7 @@ const sidebarNav = [
   { icon: Users, label: "Follow", href: "/follow" },
   { icon: Bell, label: "Notifications", href: "/notifications", badge: 2 },
   { icon: MessageSquare, label: "Chat", href: "/chat", badge: 5, },
-  { icon: FaXTwitter, label: "Primium", href: "/update", tag: "50% off", },
+  { icon: Gem, label: "Premium", href: "/update", tag: "50% off", },
   { icon: Settings, label: "Settings and privacy", href: "/settings" },
 ];
 
@@ -170,7 +173,12 @@ export default function MobileSidebar({ open, onClose }) {
 
         {/* ── FOOTER: X logo + logout ── */}
         <div className="px-4 py-5 flex items-center justify-between">
-          <FaXTwitter className="w-5 h-5 text-zinc-600" />
+          <Image
+            src={logo}
+            alt="Green Bird"
+            className="w-12 h-12 object-contain
+            "
+          />
 
           <button
             onClick={() => signOut({ redirectUrl: "/sign-in" })}

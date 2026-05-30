@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaXTwitter } from "react-icons/fa6";
 import { Plus, Search, Menu } from "lucide-react";
 import MobileSidebar from "./MobileSidebar";
+import logo from "../../../../public/assets/logo.png";
+import Image from "next/image";
 
 export default function MobileTopNav() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -65,15 +66,31 @@ export default function MobileTopNav() {
         "
       >
         {/* LEFT — Logo */}
-        <Link href="/" className="flex items-center">
-          <FaXTwitter className="w-7 h-7 text-white" />
+        <Link
+          href="/"
+          className="
+    group relative flex h-14 w-14 items-center justify-center 
+  "
+          aria-label="Green Bird home"
+        >
+          <Image
+            src={logo}
+            alt="Green Bird"
+            className="
+    h-15 w-15 object-contain
+    transition-all duration-500 ease-in-out 
+    group-hover:scale-110 
+    group-hover:brightness-125 
+    group-hover:drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]
+  "
+          />
         </Link>
 
         {/* RIGHT — Actions */}
         <div className="flex items-center gap-1">
           {/* Plus */}
           <button
-          onClick={() => router.push("/createpost")}
+            onClick={() => router.push("/createpost")}
             className="
               p-2 rounded-full
               hover:bg-white/10

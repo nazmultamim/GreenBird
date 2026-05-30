@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import logo from "../../../public/assets/logo.png";
+
 
 import {
   Search,
@@ -16,7 +18,6 @@ import {
   Settings,
   X,
   Gem,
-  Sprout,
 } from "lucide-react";
 
 import {
@@ -28,6 +29,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Dialog from "@radix-ui/react-dialog";
 import CreatePost from "../feed/CreatePost";
 import { useState } from "react";
+import Image from "next/image";
 
 
 
@@ -77,6 +79,7 @@ export default function LeftSidebar() {
         xl:w-72 w-20 shrink-0
       "
     >
+
       {/* TOP */}
       <div className="flex flex-col gap-1">
 
@@ -84,16 +87,27 @@ export default function LeftSidebar() {
         <Link
           href="/"
           className="
-            flex h-14 w-14 items-center justify-center rounded-2xl
-            border border-emerald-300/30
-            bg-emerald-400/10 text-emerald-200
-            shadow-[0_0_34px_rgba(16,185,129,0.12)]
-            transition-colors
-            hover:bg-emerald-300/15
-          "
+    group relative flex h-14 w-14 items-center justify-center ml-4
+    rounded-2xl border border-white/10 
+    bg-white/5 backdrop-blur-md
+    shadow-[0_4px_12px_rgba(0,0,0,0.5)]
+    transition-all duration-300 ease-out
+    hover:border-emerald-500/50 hover:bg-emerald-500/10
+    hover:shadow-[0_0_20px_rgba(16,185,129,0.6)]
+  "
           aria-label="Green Bird home"
         >
-          <Sprout className="h-7 w-7" strokeWidth={2.2} />
+          <Image
+            src={logo}
+            alt="Green Bird"
+            className="
+    h-15 w-15 object-contain
+    transition-all duration-500 ease-in-out 
+    group-hover:scale-110 
+    group-hover:brightness-125 
+    group-hover:drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]
+  "
+          />
         </Link>
 
         {/* NAV */}
