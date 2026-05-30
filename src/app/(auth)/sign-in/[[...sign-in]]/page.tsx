@@ -16,7 +16,13 @@ export const metadata = {
     description: 'Green Bird - A social media handle',
     url: metadataBase.toString(),
     siteName: 'Green Bird',
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630 },
+    {
+      url: "/og-image-small.jpg", // compressed JPG under 200KB for WhatsApp
+      width: 600,
+      height: 315,
+    },
+    ],
     locale: 'en_US',
     type: 'website',
   },
