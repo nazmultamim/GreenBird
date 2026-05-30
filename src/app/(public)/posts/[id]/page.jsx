@@ -9,11 +9,16 @@ import { connect } from "../../../../lib/mongodb/mongoes";
 import Post from "../../../../lib/models/post.model";
 import { serializePost } from "../../../../lib/posts/serialize-post";
 
+const BASE_URL = "https://green-bird-xi.vercel.app";
+const DEFAULT_OG = `${BASE_URL}/og-image.png`;
+
 export async function generateMetadata({ params }) {
-  const { id } = params;
+  const { id } = await params;
   await connect();
 
-  const post = await Post.findById(id).select("text name username media").lean();
+  const post = await Post.findById(id)
+    .select("text name username media createdAt")
+    .lean();
 
   if (!post) {
     return {
@@ -22,35 +27,51 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  const postUrl = `${BASE_URL}/posts/${id}`;
+  const displayName = post.name || post.username || "Someone";
+
   const title = post.text
-    ? `${post.text.slice(0, 60)} | Green Bird`
-    : `${post.name}'s post on Green Bird`;
+    ? `${post.text.slice(0, 55).trimEnd()}${post.text.length > 55 ? "…" : ""} — Green Bird`
+    : `${displayName}'s post on Green Bird`;
+
   const description = post.text
-    ? post.text.slice(0, 160)
-    : `Read ${post.name}'s latest post on Green Bird.`;
-  const imageUrl = post.media?.[0]?.url || "https://green-bird-xi.vercel.app/og-image.png";
+    ? post.text.slice(0, 155).trimEnd() + (post.text.length > 155 ? "…" : "")
+    : `Read ${displayName}'s latest post on Green Bird.`;
+
+  const imageUrl = post.media?.[0]?.url || DEFAULT_OG;
 
   return {
     title,
     description,
+    authors: [{ name: displayName }],
+    creator: displayName,
+    alternates: {
+      canonical: postUrl,
+    },
     openGraph: {
       title,
       description,
-      url: `https://green-bird-xi.vercel.app/posts/${id}`,
+      url: postUrl,
+      siteName: "Green Bird",
       images: [
         {
           url: imageUrl,
           width: 1200,
           height: 630,
+          alt: `${displayName}'s post on Green Bird`,
         },
       ],
       type: "article",
+      publishedTime: post.createdAt?.toISOString(),
+      authors: [displayName],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
       images: [imageUrl],
+      creator: post.username ? `@${post.username}` : undefined,
+      site: "@greenbird",
     },
   };
 }
@@ -71,6 +92,7 @@ export default async function PostPage({ params }) {
         <LeftSidebar />
 
         <main className="min-h-screen w-full max-w-[680px] border-x emerald-divider bg-[#02120e]/70 pt-14 shadow-[0_0_80px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:pt-0">
+          {/* Header */}
           <div className="sticky top-0 z-10 flex items-center gap-3 border-b emerald-divider bg-[rgba(2,18,14,0.86)] px-4 py-3 backdrop-blur-xl">
             <Link
               href="/"
@@ -85,16 +107,19 @@ export default async function PostPage({ params }) {
             </div>
           </div>
 
-          {post ? (
-            <PostCard post={serializePost(post, currentUser?._id)} />
-          ) : (
-            <div className="px-4 py-10">
-              <p className="text-sm font-semibold text-white">Post not found</p>
-              <p className="mt-1 text-sm text-emerald-100/50">
-                The link may be broken or the post may have been deleted.
-              </p>
-            </div>
-          )}
+          {/* FIX: padding wrapper so PostCard isn't flush against the border */}
+          <div className="p-4">
+            {post ? (
+              <PostCard post={serializePost(post, currentUser?._id)} />
+            ) : (
+              <div className="py-10">
+                <p className="text-sm font-semibold text-white">Post not found</p>
+                <p className="mt-1 text-sm text-emerald-100/50">
+                  The link may be broken or the post may have been deleted.
+                </p>
+              </div>
+            )}
+          </div>
         </main>
 
         <RightSidebar />
