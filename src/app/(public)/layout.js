@@ -2,11 +2,12 @@ import "../globals.css";
 import { ClerkProvider, ClerkLoaded, ClerkLoading } from "@clerk/nextjs";
 import Loader from "../../components/ui/lodaer";
 
+const metadataBase = new URL('https://green-bird-xi.vercel.app/');
 
 export const metadata = {
   title: 'Green Bird',
   description: 'Green Bird - A social media handle',
-  metadataBase: new URL('https://green-bird-xi.vercel.app/'),
+  metadataBase,
   icons: {
     icon: '/favicon.png',
     shortcut: '/favicon-32x32.png',
@@ -16,11 +17,11 @@ export const metadata = {
   openGraph: {
     title: 'Green Bird',
     description: 'Green Bird - A social media handle',
-    url: 'https://green-bird-xi.vercel.app/',
+    url: metadataBase.toString(),
     siteName: 'Green Bird',
     images: [
       {
-        url: '/og-image.png',
+        url: new URL('/og-image.png', metadataBase).toString(),
         width: 1200,
         height: 630,
       },
@@ -32,7 +33,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Green Bird',
     description: 'Green Bird - A social media handle',
-    images: ['/og-image.png'],
+    images: [new URL('/og-image.png', metadataBase).toString()],
   },
 };
 export default function RootLayout({ children }) {
