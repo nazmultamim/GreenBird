@@ -9,6 +9,52 @@ import { connect } from "../../../../lib/mongodb/mongoes";
 import Post from "../../../../lib/models/post.model";
 import { serializePost } from "../../../../lib/posts/serialize-post";
 
+export async function generateMetadata({ params }) {
+  const { id } = params;
+  await connect();
+
+  const post = await Post.findById(id).select("text name username media").lean();
+
+  if (!post) {
+    return {
+      title: "Post not found | Green Bird",
+      description: "The requested post could not be found.",
+    };
+  }
+
+  const title = post.text
+    ? `${post.text.slice(0, 60)} | Green Bird`
+    : `${post.name}'s post on Green Bird`;
+  const description = post.text
+    ? post.text.slice(0, 160)
+    : `Read ${post.name}'s latest post on Green Bird.`;
+  const imageUrl = post.media?.[0]?.url || "https://green-bird-xi.vercel.app/og-image.png";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://green-bird-xi.vercel.app/posts/${id}`,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+        },
+      ],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
+}
+
 export default async function PostPage({ params }) {
   const { id } = await params;
 

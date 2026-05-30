@@ -5,7 +5,10 @@ import Loader from "../../components/ui/lodaer";
 const metadataBase = new URL('https://green-bird-xi.vercel.app/');
 
 export const metadata = {
-  title: 'Green Bird',
+  title: {
+    default: 'Green Bird',
+    template: '%s | Green Bird', // এটি প্রতিটি পেজের টাইটেল অটোমেটিক সেট করবে
+  },
   description: 'Green Bird - A social media handle',
   metadataBase,
   icons: {

@@ -1,5 +1,39 @@
 import { SignIn } from "@clerk/nextjs";
 
+const metadataBase = new URL('https://green-bird-xi.vercel.app/');
+export const metadata = {
+  title: 'Sign In - Green Bird',
+  description: 'Green Bird - A social media handle',
+  metadataBase,
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon-32x32.png',
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/manifest.json',
+  openGraph: {
+    title: 'Sign In - Green Bird',
+    description: 'Green Bird - A social media handle',
+    url: metadataBase.toString(),
+    siteName: 'Green Bird',
+    images: [
+      {
+        url: new URL('/og-image.png', metadataBase).toString(),
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sign In - Green Bird',
+    description: 'Green Bird - A social media handle',
+    images: [new URL('/og-image.png', metadataBase).toString()],
+  },
+};
+
 export default function SignInPage() {
   return (
     <main className="min-h-screen flex items-center justify-center px-4">
