@@ -1,8 +1,6 @@
-import { SignUp } from "@clerk/nextjs";
-
-
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
+import "./globals.css";
+import { ClerkProvider, ClerkLoaded, ClerkLoading } from "@clerk/nextjs";
+import Loader from "../components/ui/lodaer";
 
 const BASE_URL = 'https://green-bird-xi.vercel.app';
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
@@ -11,7 +9,8 @@ const OG_IMAGE_SMALL = `${BASE_URL}/og-image-small.jpg`;
 export const metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'Sign Up - Green Bird',
+    default: 'Green Bird',
+    template: '%s | Green Bird',
   },
   description: 'Green Bird - A social media handle',
   icons: {
@@ -21,7 +20,7 @@ export const metadata = {
   },
   manifest: '/manifest.json',
   openGraph: {
-    title: 'Sign Up - Green Bird',
+    title: 'Green Bird',
     description: 'Green Bird - A social media handle',
     url: BASE_URL,
     siteName: 'Green Bird',
@@ -34,35 +33,34 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sign Up - Green Bird',
+    title: 'Green Bird',
     description: 'Green Bird - A social media handle',
     images: [OG_IMAGE],
   },
 };
 
 
-
-export default function SignUpPage() {
+export default function RootLayout({ children }) {
   return (
-    <main
-      className="
-        flex min-h-screen
-        items-center justify-center
-        px-4
-      "
-    >
-      <SignUp
-        path="/sign-up"
-        routing="path"
-        signInUrl="/sign-in"
-        forceRedirectUrl="/"
-        appearance={{
-          elements: {
-            rootBox: "w-full",
-            card: "bg-transparent shadow-none border-none",
-          },
-        }}
-      />
-    </main>
+
+    <html lang="en" className="h-full">
+      <body className="antialiased">
+        <ClerkProvider
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up"
+          afterSignInUrl="/"
+          afterSignUpUrl="/"
+        >
+          <ClerkLoading>
+            <Loader />
+          </ClerkLoading>
+
+          <ClerkLoaded>
+            {children}
+          </ClerkLoaded>
+        </ClerkProvider>
+      </body>
+    </html>
+
   );
 }

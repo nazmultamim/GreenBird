@@ -1,5 +1,9 @@
 import { SignIn } from "@clerk/nextjs";
 
+
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 const BASE_URL = 'https://green-bird-xi.vercel.app';
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
 const OG_IMAGE_SMALL = `${BASE_URL}/og-image-small.jpg`;
