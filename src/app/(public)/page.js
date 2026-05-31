@@ -3,6 +3,12 @@ import LeftSidebar from '../../components/layout/LeftSidebar'
 import RightSidebar from '../../components/layout/RightSidebar'
 import MobileTopNav from '../../components/layout/mobile/MobileTopNav'
 
+
+export const metadata = {
+  title: 'Home',
+};
+
+
 function page() {
   return (
     <div className="app-shell min-h-screen text-foreground dark">
