@@ -45,7 +45,6 @@ export async function POST(request) {
       currentUser.username,
     username: currentUser.username,
     profileImg: currentUser.avatar,
-    verificationBadge: currentUser.verificationBadge,
   });
 
   return NextResponse.json(

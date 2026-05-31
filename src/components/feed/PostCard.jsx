@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
 import {
   MessageCircle,
   Repeat2,
@@ -291,6 +292,8 @@ function PostCard({ post, onDeleted, onUpdated }) {
   const [error, setError] = useState("");
   const [shareStatus, setShareStatus] = useState("");
   const [previewIndex, setPreviewIndex] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
   const [timeLabel, setTimeLabel] = useState(
     post.createdAt ? formatRelativeTime(post.createdAt) : post.time || "now"
   );
@@ -307,6 +310,18 @@ function PostCard({ post, onDeleted, onUpdated }) {
     const interval = window.setInterval(updateTime, 60_000);
     return () => window.clearInterval(interval);
   }, [post.createdAt, post.time]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!post.id || String(post.id).length !== 24) return;
@@ -526,12 +541,16 @@ function PostCard({ post, onDeleted, onUpdated }) {
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <div className="flex min-w-0 flex-wrap items-center gap-1">
-                    <span className="truncate text-[15px] font-bold leading-tight text-white">
+                    <Link
+                      href={`/user/${post.username || post.handle}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="truncate text-[15px] font-bold leading-tight text-white hover:underline"
+                    >
                       {post.name}
-                    </span>
+                    </Link>
                     {isVerified && (
                       <span title="Verified account" className="inline-flex text-emerald-200 shrink-0 items-center justify-center ">
-                        <MdVerified size={16} />
+                        <MdVerified size={19} />
                       </span>
                     )}
                     {post.verifiedOrg && (
@@ -540,44 +559,66 @@ function PostCard({ post, onDeleted, onUpdated }) {
                       </span>
                     )}
                   </div>
-                  <p className="mt-1 truncate text-xs font-medium text-gray-400">
+                  <Link
+                    href={`/user/${post.username || post.handle}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-1 block truncate text-xs font-medium text-emerald-100/42 hover:underline"
+                  >
                     {post.handle} · {timeLabel}
-                  </p>
+                  </Link>
                 </div>
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
-              {post.isOwner && !isEditing && (
-                <button
-                  className="flex-shrink-0 rounded-full p-1.5 text-emerald-100/45 transition-colors hover:bg-emerald-300/10 hover:text-emerald-200"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditText(post.text || "");
-                    setEditMedia(media);
-                    setIsEditing(true);
-                  }}
-                  aria-label="Edit post"
-                >
-                  <Pencil size={16} />
-                </button>
-              )}
-              {post.isOwner && (
-                <button
-                  className="flex-shrink-0 rounded-full p-1.5 text-emerald-100/45 transition-colors hover:bg-red-500/10 hover:text-red-400"
-                  onClick={handleDelete}
-                  aria-label="Delete post"
-                >
-                  <Trash2 size={16} />
-                </button>
-              )}
+            {/* 3-dot dropdown — only button visible, edit/delete inside */}
+            <div className="relative shrink-0" ref={menuRef}>
               <button
                 className="flex-shrink-0 rounded-full p-1.5 text-emerald-100/45 transition-colors hover:bg-emerald-300/10 hover:text-emerald-200"
-                onClick={(e) => e.stopPropagation()}
-                aria-label="More"
+                onClick={(e) => { e.stopPropagation(); setMenuOpen((v) => !v); }}
+                aria-label="More options"
               >
                 <MoreHorizontal size={16} />
               </button>
+
+              {menuOpen && (
+                <div
+                  className="absolute right-0 top-8 z-20 min-w-[140px] overflow-hidden rounded-xl border border-emerald-300/15 bg-[#0d2318] shadow-xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {post.isOwner && !isEditing && (
+                    <button
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-emerald-100/80 transition-colors hover:bg-emerald-300/10 hover:text-white"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditText(post.text || "");
+                        setEditMedia(media);
+                        setIsEditing(true);
+                        setMenuOpen(false);
+                      }}
+                    >
+                      <Pencil size={14} />
+                      Edit post
+                    </button>
+                  )}
+                  {post.isOwner && (
+                    <button
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 transition-colors hover:bg-red-500/10"
+                      onClick={(e) => { handleDelete(e); setMenuOpen(false); }}
+                    >
+                      <Trash2 size={14} />
+                      Delete post
+                    </button>
+                  )}
+                  {!post.isOwner && (
+                    <button
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-emerald-100/80 transition-colors hover:bg-emerald-300/10 hover:text-white"
+                      onClick={(e) => { e.stopPropagation(); setMenuOpen(false); }}
+                    >
+                      Report post
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -590,6 +631,63 @@ function PostCard({ post, onDeleted, onUpdated }) {
                 maxLength={280}
                 className="min-h-24 w-full resize-none rounded-lg border border-white/10 bg-transparent p-3 text-sm text-white outline-none focus:border-emerald-500"
               />
+
+              {/* Edit media preview + add new images */}
+              {editMedia.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {editMedia.map((item) => (
+                    <div key={item.publicId || item.url} className="relative h-20 w-20 overflow-hidden rounded-lg border border-emerald-300/15">
+                      {item.type === "video" ? (
+                        <video src={item.url} className="h-full w-full object-cover" muted />
+                      ) : (
+                        <img src={item.url} alt="media" className="h-full w-full object-cover" />
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditMedia((prev) => prev.filter((m) => (m.publicId || m.url) !== (item.publicId || item.url)));
+                        }}
+                        className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/80 text-white hover:bg-black"
+                        aria-label="Remove image"
+                      >
+                        <X size={11} strokeWidth={2.5} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add image button */}
+              <label
+                className="mt-2 inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-emerald-300/20 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-300/10"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Add image
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  multiple
+                  className="hidden"
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files || []);
+                    if (!files.length) return;
+                    // Upload each file via your existing upload API
+                    const uploaded = await Promise.all(
+                      files.map(async (file) => {
+                        const fd = new FormData();
+                        fd.append("file", file);
+                        const res = await fetch("/api/upload", { method: "POST", body: fd });
+                        const data = await res.json();
+                        return data; // expects { url, publicId, type, width, height }
+                      })
+                    );
+                    setEditMedia((prev) => [...prev, ...uploaded.filter(Boolean)]);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+
               <div className="mt-2 flex justify-end gap-2">
                 <button
                   onClick={() => setIsEditing(false)}
@@ -616,8 +714,8 @@ function PostCard({ post, onDeleted, onUpdated }) {
           {error && <p className="mt-2 text-xs font-medium text-red-400">{error}</p>}
         </div>
 
-        {/* Media */}
-        {visibleMedia.length > 0 && (
+        {/* Media grid — hidden during editing (thumbnails shown in edit form above) */}
+        {visibleMedia.length > 0 && !isEditing && (
           <div className="mt-3 border-y border-emerald-300/12 bg-[#000c09]/70">
             <div className={`grid ${mediaGridClass} gap-1 overflow-hidden`}>
               {visibleMedia.map((item, index) => {

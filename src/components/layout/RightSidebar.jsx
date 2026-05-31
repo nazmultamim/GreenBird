@@ -1,6 +1,93 @@
 import { Search, MoreHorizontal, X, ShieldCheck, TrendingUp } from "lucide-react";
-import { trends, whoToFollow, news } from "../data/posts";
 
+const news = [
+  {
+    title: "AI startups see record funding as global demand surges",
+    time: "2h ago",
+    category: "Technology",
+    posts: "18.2K posts",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995"
+  },
+  {
+    title: "Oil prices climb amid rising geopolitical tensions",
+    time: "4h ago",
+    category: "Business",
+    posts: "9,430 posts",
+    image: "https://images.unsplash.com/photo-1581093588401-22c9b9d6c4c9"
+  },
+  {
+    title: "New study reveals major climate change tipping points",
+    time: "6h ago",
+    category: "Science",
+    posts: "12.7K posts",
+    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+  },
+  {
+    title: "Champions League final draws record global audience",
+    time: "8h ago",
+    category: "Sports",
+    posts: "22.1K posts",
+    image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2"
+  },
+  {
+    title: "Major social platform rolls out new creator monetization tools",
+    time: "10h ago",
+    category: "Social",
+    posts: "7,820 posts",
+    image: "https://images.unsplash.com/photo-1611162616475-46b635cb6868"
+  }
+];
+
+const trends = [
+  {
+    category: "Technology · Trending",
+    title: "#AIRevolution",
+    posts: "120K posts"
+  },
+  {
+    category: "Politics · Trending",
+    title: "Election 2026",
+    posts: "85.4K posts"
+  },
+  {
+    category: "Sports · Trending",
+    title: "UCL Final",
+    posts: "64.2K posts"
+  },
+  {
+    category: "Entertainment · Trending",
+    title: "New Marvel Trailer",
+    posts: "41.8K posts"
+  },
+  {
+    category: "Business · Trending",
+    title: "Stock Market Crash",
+    posts: "29.3K posts"
+  }
+];
+
+const whoToFollow = [
+  {
+    name: "Sarah Johnson",
+    handle: "sarahcodes",
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg"
+  },
+  {
+    name: "Michael Chen",
+    handle: "mikebuilds",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg"
+  },
+  {
+    name: "Aisha Rahman",
+    handle: "aishatech",
+    avatar: "https://randomuser.me/api/portraits/women/68.jpg"
+  },
+  {
+    name: "David Kim",
+    handle: "devdavid",
+    avatar: "https://randomuser.me/api/portraits/men/75.jpg"
+  }
+];
 
 export default function RightSidebar() {
   return (
