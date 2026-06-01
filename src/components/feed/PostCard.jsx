@@ -519,7 +519,7 @@ function PostCard({ post, onDeleted, onUpdated }) {
 
   return (
     <>
-      <article className="emerald-panel emerald-panel-hover group w-full cursor-pointer overflow-hidden rounded-xl">
+      <article className="emerald-panel emerald-panel-hover group w-full cursor-pointer overflow-hidden rounded-xl mb-4">
         <div className="px-4 pt-4">
           <div className="flex items-start gap-3">
             <img

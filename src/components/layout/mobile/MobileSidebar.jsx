@@ -104,11 +104,17 @@ export default function MobileSidebar({ open, onClose }) {
 
           {/* Following / Followers */}
           <div className="flex items-center gap-4 mt-3">
-            <Link href="/following" className="flex items-center gap-1 hover:underline">
+            <Link
+              href={user?.username ? `/user/${user.username}/following` : "/following"}
+              className="flex items-center gap-1 hover:underline"
+            >
               <span className="text-white font-bold text-sm">1</span>
               <span className="text-zinc-500 text-sm">Following</span>
             </Link>
-            <Link href="/followers" className="flex items-center gap-1 hover:underline">
+            <Link
+              href={user?.username ? `/user/${user.username}/followers` : "/followers"}
+              className="flex items-center gap-1 hover:underline"
+            >
               <span className="text-white font-bold text-sm">0</span>
               <span className="text-zinc-500 text-sm">Followers</span>
             </Link>

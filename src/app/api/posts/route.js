@@ -49,6 +49,8 @@ export async function POST(request) {
     profileImg: currentUser.avatar,
   });
 
+  await post.populate("user", "verificationBadge");
+
   return NextResponse.json(
     { post: serializePost(post, currentUser._id) },
     { status: 201 }

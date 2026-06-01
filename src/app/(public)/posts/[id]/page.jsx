@@ -85,7 +85,7 @@ export default async function PostPage({ params }) {
   const post = await Post.findById(id).populate("user", "verificationBadge");
 
   return (
-    <div className="app-shell min-h-screen text-foreground dark">
+    <div className=" min-h-screen text-foreground">
       <MobileTopNav />
 
       <div className="mx-auto flex max-w-[1420px] justify-center">

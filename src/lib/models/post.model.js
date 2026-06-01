@@ -77,10 +77,6 @@ const postSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    verificationBadge: {
-      type: Boolean,
-      default: false,
-    },
     likes: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
       default: [],

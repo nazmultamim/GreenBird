@@ -47,8 +47,7 @@ export function serializePost(post, currentUserId) {
     handle: `@${post.username}`,
     username: post.username,
     avatar: post.profileImg || "/default-avatar.png",
-    verificationBadge:
-      Boolean(post.verificationBadge) || Boolean(post.user?.verificationBadge),
+    verificationBadge: Boolean(post.user?.verificationBadge),
     userId,
     isOwner: Boolean(currentId && userId === currentId),
     liked: likedByCurrentUser,
