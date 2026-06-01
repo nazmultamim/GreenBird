@@ -1,3 +1,5 @@
+// Path: src/app/api/posts/route.js
+
 import { NextResponse } from "next/server";
 import { getCurrentDbUser } from "../../../lib/auth/current-user";
 import { connect } from "../../../lib/mongodb/mongoes";

@@ -1,3 +1,6 @@
+import { UserProfile } from '@clerk/nextjs'
+
+
 
 export async function generateMetadata({ params }) { 
   const { username } = params;
@@ -14,12 +17,11 @@ export async function generateMetadata({ params }) {
 }
 
 
-export default function ProfilePage({ params }) {
-  const { username } = params;
+export default function ProfilePage() {
   
   return (
     <main>
-      <h1>প্রোফাইল: {username}</h1>
+     <UserProfile />
     </main>
   );
 }

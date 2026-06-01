@@ -452,7 +452,7 @@ function ProfileMenu() {
             "
           >
             <Settings className="w-4 h-4" />
-            Manage Account
+            Manage Profile
           </button>
 
           {/* ADD ACCOUNT */}

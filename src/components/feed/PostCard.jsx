@@ -70,19 +70,13 @@ function CustomVideoPlayer({ src, className = "" }) {
     event?.stopPropagation();
     const video = videoRef.current;
     if (!video) return;
-
-    if (video.paused) {
-      video.play();
-    } else {
-      video.pause();
-    }
+    if (video.paused) { video.play(); } else { video.pause(); }
   };
 
   const toggleMute = (event) => {
     event.stopPropagation();
     const video = videoRef.current;
     if (!video) return;
-
     video.muted = !video.muted;
     setIsMuted(video.muted);
   };
@@ -91,23 +85,20 @@ function CustomVideoPlayer({ src, className = "" }) {
     event.stopPropagation();
     const video = videoRef.current;
     if (!video || !duration) return;
-
-    const nextTime = (Number(event.target.value) / 100) * duration;
-    video.currentTime = nextTime;
-    setProgress(Number(event.target.value));
+    const nextProgress = Number(event.target.value);
+    video.currentTime = (nextProgress / 100) * duration;
+    setProgress(nextProgress);
   };
 
   return (
     <div
-      className={`group relative flex items-center justify-center bg-black ${className}`}
-      style={{ width: "100%", height: "100%" }}
+      className={`group relative flex h-full w-full items-center justify-center bg-black ${className}`}
       onClick={togglePlay}
     >
       <video
         ref={videoRef}
         src={src}
-        className="block max-h-full max-w-full object-contain"
-        style={{ width: "100%", height: "100%" }}
+        className="h-full w-full object-contain"
         preload="metadata"
         playsInline
         onLoadedMetadata={(event) => setDuration(event.currentTarget.duration || 0)}
@@ -118,30 +109,31 @@ function CustomVideoPlayer({ src, className = "" }) {
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onVolumeChange={(event) => setIsMuted(event.currentTarget.muted)}
+        onClick={(event) => { event.stopPropagation(); togglePlay(event); }}
       />
 
       {!isPlaying && (
         <button
           type="button"
           onClick={togglePlay}
-          className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur transition hover:bg-black/85"
+          className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur transition hover:bg-black/85"
           aria-label="Play video"
         >
-          <Play size={24} fill="currentColor" />
+          <Play size={21} fill="currentColor" />
         </button>
       )}
 
       <div
-        className="absolute inset-x-0 bottom-0 flex items-center gap-3 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-4 pb-4 pt-10 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100"
+        className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-3 pb-3 pt-8"
         onClick={(event) => event.stopPropagation()}
       >
         <button
           type="button"
           onClick={togglePlay}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-black transition hover:bg-emerald-100"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-black transition hover:bg-emerald-100"
           aria-label={isPlaying ? "Pause video" : "Play video"}
         >
-          {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
+          {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" />}
         </button>
 
         <input
@@ -157,10 +149,10 @@ function CustomVideoPlayer({ src, className = "" }) {
         <button
           type="button"
           onClick={toggleMute}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/12 text-white transition hover:bg-white/20"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/12 text-white transition hover:bg-white/20"
           aria-label={isMuted ? "Unmute video" : "Mute video"}
         >
-          {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+          {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
         </button>
       </div>
     </div>
@@ -246,8 +238,7 @@ function MediaPreview({ visibleMedia, previewIndex, setPreviewIndex }) {
       )}
 
       <div
-        className="flex w-full max-w-4xl items-center justify-center rounded-md overflow-hidden"
-        style={{ height: "min(88vh, 720px)" }}
+        className="flex h-full max-h-[88vh] w-full max-w-4xl items-center justify-center overflow-hidden rounded-md"
         onClick={(event) => event.stopPropagation()}
       >
         {previewItem.type === "video" ? (
@@ -542,7 +533,7 @@ function PostCard({ post, onDeleted, onUpdated }) {
                 <div className="min-w-0">
                   <div className="flex min-w-0 flex-wrap items-center gap-1">
                     <Link
-                      href={`/user/${post.username || post.handle}`}
+                      href={`/user/${post.username || (post.handle?.replace("@", ""))}`}
                       onClick={(e) => e.stopPropagation()}
                       className="truncate text-[15px] font-bold leading-tight text-white hover:underline"
                     >
@@ -560,7 +551,7 @@ function PostCard({ post, onDeleted, onUpdated }) {
                     )}
                   </div>
                   <Link
-                    href={`/user/${post.username || post.handle}`}
+                    href={`/user/${post.username || (post.handle?.replace("@", ""))}`}
                     onClick={(e) => e.stopPropagation()}
                     className="mt-1 block truncate text-xs font-medium text-emerald-100/42 hover:underline"
                   >
@@ -632,28 +623,76 @@ function PostCard({ post, onDeleted, onUpdated }) {
                 className="min-h-24 w-full resize-none rounded-lg border border-white/10 bg-transparent p-3 text-sm text-white outline-none focus:border-emerald-500"
               />
 
-              {/* Edit media preview + add new images */}
               {editMedia.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {editMedia.map((item) => (
-                    <div key={item.publicId || item.url} className="relative h-20 w-20 overflow-hidden rounded-lg border border-emerald-300/15">
-                      {item.type === "video" ? (
-                        <video src={item.url} className="h-full w-full object-cover" muted />
-                      ) : (
-                        <img src={item.url} alt="media" className="h-full w-full object-cover" />
-                      )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditMedia((prev) => prev.filter((m) => (m.publicId || m.url) !== (item.publicId || item.url)));
+                <div className={`mt-2 grid gap-1 overflow-hidden rounded-xl border border-emerald-300/15 bg-black/20 ${
+                  { 1: "grid-cols-1", 2: "grid-cols-2", 3: "grid-cols-2", 4: "grid-cols-2" }[editMedia.length] ?? "grid-cols-2"
+                }`}>
+                  {editMedia.map((item, index) => {
+                    const isSingle = editMedia.length === 1;
+                    const isSingleVideo = isSingle && item.type === "video";
+                    const isSinglePortrait = isSingle && item.type === "image" && item.width && item.height && item.height > item.width;
+
+                    return (
+                      <div
+                        key={item._tempId || item.publicId || item.url}
+                        className={`relative overflow-hidden bg-black ${editMedia.length === 3 && index === 0 ? "row-span-2" : ""}`}
+                        style={{
+                          aspectRatio: isSingleVideo
+                            ? undefined                                          // video: no forced ratio, natural height
+                            : isSingle
+                              ? isSinglePortrait ? undefined : "4/3"            // portrait image: natural, landscape: 4/3
+                              : "1/1",                                           // multi: square cells
+                          height: isSingleVideo
+                            ? "min(68vh, 540px)"                                // video: tall container like PostCard
+                            : isSinglePortrait
+                              ? "min(68vh, 540px)"
+                              : undefined,
+                          maxHeight: isSingle ? "min(68vh, 540px)" : undefined,
                         }}
-                        className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/80 text-white hover:bg-black"
-                        aria-label="Remove image"
                       >
-                        <X size={11} strokeWidth={2.5} />
-                      </button>
-                    </div>
-                  ))}
+                        {item.type === "video" ? (
+                          isSingle ? (
+                            /* Full custom player for single video */
+                            <CustomVideoPlayer src={item.url} className="rounded-none" />
+                          ) : (
+                            /* Thumbnail with play icon for multi-grid */
+                            <>
+                              <video src={item.url} className="h-full w-full object-cover" muted playsInline />
+                              <span className="pointer-events-none absolute left-1/2 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white">
+                                <Play size={18} fill="currentColor" />
+                              </span>
+                            </>
+                          )
+                        ) : (
+                          <img
+                            src={item.url}
+                            alt="media"
+                            className={isSingle ? "h-full max-h-full w-auto max-w-full object-contain mx-auto" : "h-full w-full object-cover"}
+                          />
+                        )}
+                        {item.uploading && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                            <svg className="h-5 w-5 animate-spin text-emerald-300" viewBox="0 0 24 24" fill="none">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                            </svg>
+                          </div>
+                        )}
+                        {!item.uploading && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditMedia((prev) => prev.filter((m) => (m._tempId || m.publicId || m.url) !== (item._tempId || item.publicId || item.url)));
+                            }}
+                            className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur-sm transition hover:bg-black/90"
+                            aria-label="Remove media"
+                          >
+                            <X size={14} strokeWidth={2.5} />
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
 
@@ -669,20 +708,55 @@ function PostCard({ post, onDeleted, onUpdated }) {
                   accept="image/*,video/*"
                   multiple
                   className="hidden"
+                  disabled={editMedia.length >= 4}
                   onChange={async (e) => {
                     const files = Array.from(e.target.files || []);
                     if (!files.length) return;
-                    // Upload each file via your existing upload API
-                    const uploaded = await Promise.all(
-                      files.map(async (file) => {
-                        const fd = new FormData();
-                        fd.append("file", file);
-                        const res = await fetch("/api/upload", { method: "POST", body: fd });
-                        const data = await res.json();
-                        return data; // expects { url, publicId, type, width, height }
+                    const slots = 4 - editMedia.length;
+
+                    // 1. Show instant local previews with uploading flag
+                    const previews = files.slice(0, slots).map((file) => ({
+                      url: URL.createObjectURL(file),
+                      type: file.type.startsWith("video/") ? "video" : "image",
+                      publicId: null,
+                      uploading: true,
+                      _tempId: Math.random().toString(36).slice(2),
+                    }));
+                    setEditMedia((prev) => [...prev, ...previews]);
+
+                    // 2. Upload each file to Cloudinary and replace preview with real data
+                    await Promise.all(
+                      files.slice(0, slots).map(async (file, i) => {
+                        const tempId = previews[i]._tempId;
+                        try {
+                          const fd = new FormData();
+                          fd.append("file", file);
+                          const res = await fetch("/api/cloudinary/upload", { method: "POST", body: fd });
+                          const data = await res.json();
+                          if (!res.ok) throw new Error(data?.error || "Upload failed");
+
+                          // Replace the preview entry with real Cloudinary data
+                          setEditMedia((prev) =>
+                            prev.map((m) =>
+                              m._tempId === tempId
+                                ? {
+                                    url: data.url,
+                                    type: data.resourceType === "video" ? "video" : "image",
+                                    publicId: data.publicId,
+                                    width: data.width,
+                                    height: data.height,
+                                    uploading: false,
+                                  }
+                                : m
+                            )
+                          );
+                        } catch {
+                          // Remove failed preview
+                          setEditMedia((prev) => prev.filter((m) => m._tempId !== tempId));
+                          setError("Upload failed. Please try again.");
+                        }
                       })
                     );
-                    setEditMedia((prev) => [...prev, ...uploaded.filter(Boolean)]);
                     e.target.value = "";
                   }}
                 />
@@ -698,7 +772,8 @@ function PostCard({ post, onDeleted, onUpdated }) {
                 </button>
                 <button
                   onClick={handleEdit}
-                  className="rounded-full bg-white p-2 text-black hover:bg-white/90"
+                  disabled={editMedia.some((m) => m.uploading)}
+                  className="rounded-full bg-white p-2 text-black hover:bg-white/90 disabled:opacity-40 disabled:cursor-not-allowed"
                   aria-label="Save edit"
                 >
                   <Check size={16} />
