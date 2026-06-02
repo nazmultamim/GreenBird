@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentDbUser } from "../../../../../lib/auth/current-user";
 import { connect } from "../../../../../lib/mongodb/mongoes";
 import Post from "../../../../../lib/models/post.model";
+import { createNotification } from "../../../../../lib/notifications/notification-service";
 
 export async function POST(request, { params }) {
   const currentUser = await getCurrentDbUser();
@@ -37,6 +38,18 @@ export async function POST(request, { params }) {
   });
 
   await post.save();
+
+  if (post.user?.toString?.() !== currentUser._id.toString()) {
+    await createNotification({
+      recipientId: post.user,
+      actorId: currentUser._id,
+      type: "comment",
+      postId: post._id,
+      actorName:
+        [currentUser.firstName, currentUser.lastName].filter(Boolean).join(" ") ||
+        currentUser.username,
+    });
+  }
 
   const savedComment = post.comments[post.comments.length - 1];
 

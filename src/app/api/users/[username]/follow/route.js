@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connect } from "../../../../../lib/mongodb/mongoes";
 import { getCurrentDbUser } from "../../../../../lib/auth/current-user";
 import User from "../../../../../lib/models/user.model";
+import { createNotification } from "../../../../../lib/notifications/notification-service";
 
 export async function POST(_request, { params }) {
   const currentUser = await getCurrentDbUser();
@@ -40,6 +41,15 @@ export async function POST(_request, { params }) {
     });
     await User.findByIdAndUpdate(profileUser._id, {
       $addToSet: { followers: currentUser._id },
+    });
+
+    await createNotification({
+      recipientId: profileUser._id,
+      actorId: currentUser._id,
+      type: "follow",
+      actorName:
+        [currentUser.firstName, currentUser.lastName].filter(Boolean).join(" ") ||
+        currentUser.username,
     });
   }
 

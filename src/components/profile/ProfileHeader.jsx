@@ -161,7 +161,7 @@ export default function ProfileHeader({
                 : following
                   ? "Following"
                   : "Follow"}
-            </button> 
+            </button>
           </div>
 
           <div className="mt-3">
@@ -189,11 +189,11 @@ export default function ProfileHeader({
           <div className="mt-3 flex gap-4 text-sm">
             <Link href={`/user/${user.username}/followers`}>
               <strong>{followers}</strong>{" "}
-              <span className="text-gray-400">Followers</span>
+              <span className="text-gray-400 hover:underline">Followers</span>
             </Link>
             <Link href={`/user/${user.username}/following`}>
               <strong>{user.followingCount ?? 0}</strong>{" "}
-              <span className="text-gray-400">Following</span>
+              <span className="text-gray-400 hover:underline">Following</span>
             </Link>
           </div>
 
@@ -205,112 +205,115 @@ export default function ProfileHeader({
 
       {/* ================= MODAL ================= */}
       {editing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl rounded-2xl bg-[#111827] border border-white/10 p-6 shadow-2xl transition-all">
+        <div className="fixed inset-0 z-50 flex justify-center bg-black/80 px-4 backdrop-blur-sm">
+
+          <div className="w-full max-w-2xl max-h-[85vh] mt-20 flex flex-col rounded-2xl bg-[#03231b] border border-white/10 shadow-2xl">
 
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/5 pb-4">
-              <h3 className="text-xl font-semibold text-white tracking-wide">Edit Profile</h3>
+            <div className="flex items-center justify-between border-b border-white/5 p-4">
+              <h3 className="text-xl font-semibold text-white">Edit Profile</h3>
+
               <button
                 onClick={() => setEditing(false)}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
+                className="p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Content */}
-            <div className="mt-6 space-y-6">
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
 
-              {/* Visual Header Group (Avatar & Banner) */}
-              <div className="flex flex-col items-center dynamic-profile-group">
+              {/* Hidden Inputs */}
+              <input
+                type="file"
+                ref={avatarInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  const url = await uploadFile(file);
+                  if (url) setAvatarUrl(url);
+                }}
+              />
 
-                {/* Hidden Inputs */}
-                <input
-                  type="file"
-                  ref={avatarInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    const url = await uploadFile(file);
-                    if (url) setAvatarUrl(url);
-                  }}
-                />
-                <input
-                  type="file"
-                  ref={bannerInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    const url = await uploadFile(file);
-                    if (url) setBannerUrlState(url);
-                  }}
-                />
+              <input
+                type="file"
+                ref={bannerInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  const url = await uploadFile(file);
+                  if (url) setBannerUrlState(url);
+                }}
+              />
 
-                {/* Avatar (Top Center) */}
-                <div className="mb-4 text-center">
-                  <p className="text-xs font-medium uppercase tracking-wider text-gray-400 mb-2">Avatar</p>
-                  <div
-                    onClick={() => avatarInputRef.current?.click()}
-                    className="group relative h-24 w-24 cursor-pointer rounded-full overflow-hidden border-2 border-white/20 shadow-lg transition-transform duration-300 hover:scale-105"
-                  >
-                    <img
-                      src={avatarUrl || "/default-avatar.png"}
-                      className="h-full w-full object-cover transition duration-300 group-hover:blur-[2px]"
-                      alt="Avatar"
-                    />
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <Camera className="h-6 w-6 text-white" />
-                      <span className="text-[10px] font-medium text-white mt-1">Change</span>
+              {/* Avatar */}
+              <div className="text-center">
+                <p className="text-xs uppercase text-gray-400 mb-2">Avatar</p>
+
+                <div
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="group relative h-24 w-24 mx-auto cursor-pointer rounded-full overflow-hidden border-2 border-white/20"
+                >
+                  <img
+                    src={avatarUrl || "/default-avatar.png"}
+                    className="h-full w-full object-cover group-hover:blur-[2px]"
+                    alt="Avatar"
+                  />
+
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100">
+                    <Camera className="h-5 w-5 text-white" />
+                    <span className="text-xs text-white mt-1">Change</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Banner */}
+              <div>
+                <p className="text-xs uppercase text-gray-400 mb-2">Banner</p>
+
+                <div
+                  onClick={() => bannerInputRef.current?.click()}
+                  className="group relative h-40 w-full cursor-pointer rounded-xl overflow-hidden border border-white/10"
+                >
+                  <img
+                    src={bannerUrlState || bannerUrl}
+                    className="h-full w-full object-cover group-hover:blur-[1px]"
+                    alt="Banner"
+                  />
+
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100">
+                    <div className="flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded-lg">
+                      <Camera className="h-4 w-4 text-white" />
+                      <span className="text-xs text-white">Upload</span>
                     </div>
                   </div>
                 </div>
-
-                {/* Banner */}
-                <div className="w-full">
-                  <p className="text-xs font-medium uppercase tracking-wider text-gray-400 mb-2">Banner</p>
-                  <div
-                    onClick={() => bannerInputRef.current?.click()}
-                    className="group relative h-40 w-full cursor-pointer rounded-xl overflow-hidden border border-white/10 bg-gray-900 shadow-inner transition-all"
-                  >
-                    <img
-                      src={bannerUrlState || bannerUrl}
-                      className="h-full w-full object-cover transition duration-300 group-hover:blur-[1px]"
-                      alt="Banner"
-                    />
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <div className="flex items-center gap-2 rounded-lg bg-black/40 px-3 py-1.5 backdrop-blur-sm border border-white/10">
-                        <Camera className="h-4 w-4 text-white" />
-                        <span className="text-xs font-medium text-white">Upload Cover Photo</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
               </div>
 
               {/* Bio */}
               <div>
-                <label className="text-xs font-medium uppercase tracking-wider text-gray-400 block mb-2">Bio</label>
+                <label className="text-xs uppercase text-gray-400 mb-2 block">
+                  Bio
+                </label>
+
                 <textarea
                   value={bioValueState}
                   onChange={(e) => setBioValue(e.target.value)}
                   rows={3}
-                  className="w-full rounded-xl border border-white/10 bg-black/40 p-3 text-sm text-white placeholder-gray-500 outline-none transition-all focus:border-white/30 focus:ring-1 focus:ring-white/30"
+                  className="w-full rounded-xl border border-white/10 bg-black/40 p-3 text-sm text-white outline-none focus:border-white/30"
                   placeholder="Tell the world about yourself..."
                 />
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="mt-6 flex justify-end gap-3 border-t border-white/5 pt-4">
+            {/* Footer */}
+            <div className="flex justify-end gap-3 border-t border-white/5 p-4">
               <button
                 onClick={() => setEditing(false)}
-                className="px-5 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white"
               >
                 Cancel
               </button>
@@ -318,11 +321,12 @@ export default function ProfileHeader({
               <button
                 onClick={handleSaveProfile}
                 disabled={pending || uploading}
-                className="rounded-xl bg-white px-6 py-2 text-sm font-semibold text-black transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                className="bg-white text-black px-6 py-2 rounded-xl font-semibold disabled:opacity-50"
               >
-                {pending || uploading ? 'Saving...' : 'Save Changes'}
+                {pending || uploading ? "Saving..." : "Save Changes"}
               </button>
             </div>
+
           </div>
         </div>
       )}

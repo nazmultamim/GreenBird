@@ -102,7 +102,7 @@ export default function MobileTopNav() {
 
           {/* Search */}
           <Link
-            href="/explore"
+            href="/search"
             className="
               p-2 rounded-full
               hover:bg-white/10

@@ -6,6 +6,8 @@ import {
 const isProtectedRoute = createRouteMatcher([
   "/",
   "/explore",
+  "/search",
+  "/search/(.*)",
   "/notifications",
   "/follow",
   "/chat",

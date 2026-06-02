@@ -1,5 +1,4 @@
 
-
 import LeftSidebar from "../../../../../components/layout/LeftSidebar";
 import RightSidebar from "../../../../../components/layout/RightSidebar";
 import MobileTopNav from "../../../../../components/layout/mobile/MobileTopNav";
@@ -9,6 +8,7 @@ import { notFound } from "next/navigation";
 import { connect } from "../../../../../lib/mongodb/mongoes";
 import { getCurrentDbUser } from "../../../../../lib/auth/current-user";
 import User from "../../../../../lib/models/user.model";
+import BackButton from "../../../../../components/ui/BackBtn";
 
 function getDisplayName(user) {
   return user.firstName
@@ -44,10 +44,11 @@ export default async function FollowingPage({ params }) {
         <LeftSidebar />
 
         {/* MAIN */}
-        <main className="w-full max-w-[680px] border-x border-emerald-500/10 backdrop-blur-xl">
+        <main className="w-full max-w-[680px] border-x border-emerald-500/10 backdrop-blur-xl mt-14">
 
           {/* HEADER */}
-          <div className="sticky top-0 z-20 border-b border-emerald-500/10 bg-black/10 backdrop-blur-xl">
+          <div className="sticky top-0 z-20 flex items-center border-b border-emerald-500/10 bg-black/10 backdrop-blur-xl">
+           <BackButton />
             <div className="px-4 py-4">
               <h1 className="text-lg font-bold tracking-tight">
                 {displayName}

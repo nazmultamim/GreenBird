@@ -1,6 +1,7 @@
 import "./globals.css";
 import { ClerkProvider, ClerkLoaded, ClerkLoading } from "@clerk/nextjs";
 import Loader from "../components/ui/lodaer";
+import { NotificationProvider } from "../components/notifications/NotificationProvider";
 
 const BASE_URL = 'https://green-bird-xi.vercel.app';
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
@@ -56,7 +57,7 @@ export default function RootLayout({ children }) {
           </ClerkLoading>
 
           <ClerkLoaded>
-            {children}
+            <NotificationProvider>{children}</NotificationProvider>
           </ClerkLoaded>
         </ClerkProvider>
       </body>

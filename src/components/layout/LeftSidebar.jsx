@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useVerificationBadge } from "../../lib/hooks/useVerificationBadge";
 import logo from "../../../public/assets/logo.png";
 
 
 import {
   Search,
   Bell,
-  Bookmark,
   User,
   Users,
   MessageSquare,
@@ -19,7 +19,7 @@ import {
   X,
   Gem,
 } from "lucide-react";
-
+import { MdVerified } from "react-icons/md";
 import {
   useUser,
   useClerk,
@@ -30,6 +30,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import CreatePost from "../feed/CreatePost";
 import { useState } from "react";
 import Image from "next/image";
+import { useNotifications } from "../notifications/NotificationProvider";
 
 
 
@@ -47,11 +48,10 @@ const HomeIcon = (props) => (
 ========================= */
 const navItems = [
   { icon: HomeIcon, label: "Home", href: "/", active: true },
-  { icon: Search, label: "Explore", href: "/explore" },
-  { icon: Bell, label: "Notifications", href: "/notifications", badge: 2 },
+  { icon: Search, label: "Search", href: "/search" },
+  { icon: Bell, label: "Notifications", href: "/notifications" },
   { icon: Users, label: "Follow", href: "/follow" },
   { icon: MessageSquare, label: "Chat", href: "/chat" },
-  { icon: Bookmark, label: "Bookmarks", href: "/bookmarks" },
   {
     icon: Gem,
     label: "Premium",
@@ -65,8 +65,8 @@ const navItems = [
    SIDEBAR
 ========================= */
 export default function LeftSidebar() {
-
-
+  const { unreadCount } = useNotifications();
+  const { user } = useUser();
   const [openPost, setOpenPost] = useState(false);
 
 
@@ -114,11 +114,17 @@ export default function LeftSidebar() {
         <nav className="flex flex-col gap-1 mt-1">
           {navItems.map((item) => {
             const Icon = item.icon;
+            const linkHref =
+              item.label === "Profile"
+                ? user?.username
+                  ? `/user/${user.username}`
+                  : "/profile"
+                : item.href;
 
             return (
               <Link
                 key={item.label}
-                href={item.href}
+                href={linkHref}
                 className={`
                   flex items-center gap-5
                   px-3 py-2.5 rounded-full
@@ -136,7 +142,7 @@ export default function LeftSidebar() {
                   />
 
                   {/* BADGE */}
-                  {item.badge && (
+                  {item.label === "Notifications" && unreadCount > 0 && (
                     <span
                       className="
                         absolute -top-1 -right-2
@@ -146,7 +152,7 @@ export default function LeftSidebar() {
                         flex items-center justify-center
                       "
                     >
-                      {item.badge}
+                      {unreadCount > 99 ? "99+" : unreadCount}
                     </span>
                   )}
                 </div>
@@ -318,6 +324,7 @@ export default function LeftSidebar() {
 ========================= */
 function ProfileMenu() {
   const { user } = useUser();
+  const { isVerified } = useVerificationBadge();
 
   const {
     signOut,
@@ -421,9 +428,17 @@ function ProfileMenu() {
                 "
               />
 
-              <div className="overflow-hidden">
+              <div className="overflow-hidden gap-1 flex flex-col">
                 <p className="font-semibold text-sm truncate">
-                  {user?.fullName}
+                  {user?.fullName} {isVerified && (
+                    <span className="hidden xl:inline-flex
+                      bg-emerald-300/12
+                      text-emerald-300
+                      border border-emerald-300/50
+                      text-[10px] font-bold
+                      px-1 py-0.4 items-center rounded
+                      whitespace-nowrap"><MdVerified className="inline-block w-3 h-3 mr-1" />Verified</span>
+                  )}
                 </p>
 
                 <p

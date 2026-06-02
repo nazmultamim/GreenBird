@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Search, MoreHorizontal, X, ShieldCheck, TrendingUp } from "lucide-react";
 
 const news = [
@@ -90,16 +94,34 @@ const whoToFollow = [
 ];
 
 export default function RightSidebar() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+
+    const searchTerm = String(searchQuery).trim();
+    if (!searchTerm) return;
+
+    router.push(`/search/${encodeURIComponent(searchTerm)}`);
+    setSearchQuery("");
+  };
+
   return (
-    <aside className="hidden lg:block w-[370px] shrink-0 px-6 py-2 space-y-4 sticky top-0 h-screen overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      <div className=" top-0 pt-1 pb-2 z-10">
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            placeholder="Search"
-            className="w-full rounded-full border border-emerald-300/20 bg-emerald-950/30 py-2.5 pl-11 pr-4 text-sm outline-none transition focus:border-emerald-300/60 focus:bg-background focus:ring-1 focus:ring-emerald-300/40"
-          />
-        </div>
+    <aside className="hidden lg:block w-92.5 shrink-0 px-6 py-2 space-y-4 sticky top-0 h-screen overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden">
+      <div className="top-0 pt-1 pb-2 z-10">
+        <form onSubmit={handleSearchSubmit}>
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search people or posts"
+              className="w-full rounded-full border border-emerald-300/20 bg-emerald-950/30 py-2.5 pl-11 pr-4 text-sm text-emerald-100 outline-none transition focus:border-emerald-300/60 focus:bg-emerald-950/70 focus:ring-1 focus:ring-emerald-300/40"
+            />
+            <button type="submit" className="sr-only">Search</button>
+          </div>
+        </form>
       </div>
 
       <div className="emerald-panel rounded-xl p-4">

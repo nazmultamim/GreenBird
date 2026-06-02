@@ -8,6 +8,7 @@ import { getCurrentDbUser } from "../../../../lib/auth/current-user";
 import { connect } from "../../../../lib/mongodb/mongoes";
 import Post from "../../../../lib/models/post.model";
 import { serializePost } from "../../../../lib/posts/serialize-post";
+import BackButton from "@/components/ui/BackBtn";
 
 const BASE_URL = "https://green-bird-xi.vercel.app";
 const DEFAULT_OG = `${BASE_URL}/og-image.png`;
@@ -94,13 +95,8 @@ export default async function PostPage({ params }) {
         <main className="min-h-screen w-full max-w-[680px] border-x emerald-divider bg-[#02120e]/70 pt-14 shadow-[0_0_80px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:pt-0">
           {/* Header */}
           <div className="sticky top-0 z-10 flex items-center gap-3 border-b emerald-divider bg-[rgba(2,18,14,0.86)] px-4 py-3 backdrop-blur-xl">
-            <Link
-              href="/"
-              className="rounded-full p-2 text-emerald-100/70 transition hover:bg-emerald-300/10 hover:text-emerald-100"
-              aria-label="Back to feed"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+
+            <BackButton />
             <div>
               <h1 className="text-lg font-bold text-white">Post</h1>
               <p className="text-xs text-emerald-100/45">Shared from Green Bird</p>

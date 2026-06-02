@@ -5,6 +5,7 @@ import { getCurrentDbUser } from "../../../lib/auth/current-user";
 import { connect } from "../../../lib/mongodb/mongoes";
 import Post from "../../../lib/models/post.model";
 import { serializePost } from "../../../lib/posts/serialize-post";
+import { createManyNotifications } from "../../../lib/notifications/notification-service";
 
 export async function GET() {
   await connect();
@@ -50,6 +51,24 @@ export async function POST(request) {
   });
 
   await post.populate("user", "verificationBadge");
+
+  const followerIds = Array.isArray(currentUser.followers)
+    ? currentUser.followers.map((id) => id.toString()).filter(Boolean)
+    : [];
+
+  if (followerIds.length > 0) {
+    await createManyNotifications(
+      followerIds.map((recipientId) => ({
+        recipientId,
+        actorId: currentUser._id,
+        type: "post",
+        postId: post._id,
+        actorName:
+          [currentUser.firstName, currentUser.lastName].filter(Boolean).join(" ") ||
+          currentUser.username,
+      }))
+    );
+  }
 
   return NextResponse.json(
     { post: serializePost(post, currentUser._id) },

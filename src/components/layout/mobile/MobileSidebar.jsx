@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useUser, useClerk } from "@clerk/nextjs";
+import { useVerificationBadge } from "../../../lib/hooks/useVerificationBadge";
 import {
   User,
   MessageSquare,
@@ -13,23 +14,27 @@ import {
   X,
   Gem,
 } from "lucide-react";
+import { MdVerified } from "react-icons/md";
 
 import logo from "../../../../public/assets/logo.png";
 import Image from "next/image";
+import { useNotifications } from "../../notifications/NotificationProvider";
 
 /* ── NAV ITEMS ── */
 const sidebarNav = [
   { icon: User, label: "Profile", href: "/profile" },
   { icon: Users, label: "Follow", href: "/follow" },
-  { icon: Bell, label: "Notifications", href: "/notifications", badge: 2 },
+  { icon: Bell, label: "Notifications", href: "/notifications" },
   { icon: MessageSquare, label: "Chat", href: "/chat", badge: 5, },
-  { icon: Gem, label: "Premium", href: "/update", tag: "50% off", },
+  { icon: Gem, label: "Premium", href: "/premium", tag: "50% off", },
   { icon: Settings, label: "Settings and privacy", href: "/settings" },
 ];
 
 export default function MobileSidebar({ open, onClose }) {
   const { user } = useUser();
   const { signOut } = useClerk();
+  const { unreadCount } = useNotifications();
+  const { isVerified } = useVerificationBadge();
 
   /* Lock body scroll while open */
   useEffect(() => {
@@ -94,9 +99,18 @@ export default function MobileSidebar({ open, onClose }) {
         </div>
 
         {/* ── USER INFO ── */}
-        <div className="px-4 pb-4">
-          <p className="font-bold text-white text-base leading-tight">
+        <div className="px-4 pb-4 gap-1 flex flex-col">
+          <p className="font-bold text-white text-base leading-tight ">
             {user?.fullName ?? "User"}
+            {isVerified && (
+              <span className="
+                                bg-emerald-300/12
+                                  text-emerald-300
+                                  border border-emerald-300/50
+                                  text-[10px] font-bold
+                                  px-1 py-0.4 ml-2 items-center rounded
+                                  whitespace-nowrap"><MdVerified className="inline-block w-3 h-3 mr-1" />Verified</span>
+            )}
           </p>
           <p className="text-zinc-500 text-sm mt-0.5">
             @{user?.username ?? user?.firstName ?? "user"}
@@ -128,10 +142,17 @@ export default function MobileSidebar({ open, onClose }) {
         <nav className="flex flex-col py-2 flex-1">
           {sidebarNav.map((item) => {
             const Icon = item.icon;
+            const linkHref =
+              item.label === "Profile"
+                ? user?.username
+                  ? `/user/${user.username}`
+                  : "/profile"
+                : item.href;
+
             return (
               <Link
                 key={item.label}
-                href={item.href}
+                href={linkHref}
                 onClick={onClose}
                 className="
                   flex items-center gap-5
@@ -145,14 +166,14 @@ export default function MobileSidebar({ open, onClose }) {
                 <span className="text-xl font-medium flex-1">{item.label}</span>
 
                 {/* Badge */}
-                {item.badge && (
+                {item.label === "Notifications" && unreadCount > 0 && (
                   <span className="
                     bg-emerald-600 text-white
                     text-[11px] font-bold
                     rounded-full min-w-[20px] h-5 px-1
                     flex items-center justify-center
                   ">
-                    {item.badge}
+                    {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}
 
