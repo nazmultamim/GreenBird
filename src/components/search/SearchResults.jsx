@@ -33,6 +33,8 @@ function PersonCard({ person }) {
         <img
           src={person.avatar}
           alt={person.displayName}
+          loading="lazy"
+          decoding="async"
           className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover ring-1 ring-white/10 transition group-hover:ring-emerald-300/30"
         />
       </Link>
@@ -154,6 +156,17 @@ export default function SearchResults({ initialQuery = "" }) {
   const renderedPosts = results.posts;
   const renderedPeople = results.people;
 
+  const handlePostDeleted = (postId) => {
+    setResults((prev) => ({
+      ...prev,
+      posts: prev.posts.filter((post) => post.id !== postId),
+      counts: {
+        ...prev.counts,
+        posts: Math.max(0, prev.counts.posts - 1),
+      },
+    }));
+  };
+
   return (
     <div className="space-y-4 p-4 sm:p-5">
       <section className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(52,211,153,0.28),transparent_35%),linear-gradient(135deg,rgba(2,10,8,0.96),rgba(3,23,18,0.82))] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.22)]">
@@ -244,7 +257,7 @@ export default function SearchResults({ initialQuery = "" }) {
               renderedPosts.length > 0 ? (
                 <div className="space-y-4">
                   {renderedPosts.map((post) => (
-                    <PostCard key={post.id} post={post} />
+                    <PostCard key={post.id} post={post} onDeleted={handlePostDeleted} />
                   ))}
                 </div>
               ) : (

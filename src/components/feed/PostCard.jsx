@@ -266,7 +266,7 @@ function MediaPreview({ visibleMedia, previewIndex, setPreviewIndex }) {
   );
 }
 
-function PostCard({ post, onDeleted, onUpdated }) {
+function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
   const [liked, setLiked] = useState(post.liked ?? false);
   const [likeCount, setLikeCount] = useState(post.likes ?? 0);
   const [retweeted, setRetweeted] = useState(false);
@@ -284,6 +284,7 @@ function PostCard({ post, onDeleted, onUpdated }) {
   const [shareStatus, setShareStatus] = useState("");
   const [previewIndex, setPreviewIndex] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const menuRef = useRef(null);
   const [timeLabel, setTimeLabel] = useState(
     post.createdAt ? formatRelativeTime(post.createdAt) : post.time || "now"
@@ -315,7 +316,7 @@ function PostCard({ post, onDeleted, onUpdated }) {
   }, [menuOpen]);
 
   useEffect(() => {
-    if (!post.id || String(post.id).length !== 24) return;
+    if (!trackView || !post.id || String(post.id).length !== 24) return;
 
     fetch(`/api/posts/${post.id}/view`, { method: "POST" })
       .then((response) => response.json())
@@ -325,7 +326,7 @@ function PostCard({ post, onDeleted, onUpdated }) {
         }
       })
       .catch(() => { });
-  }, [post.id]);
+  }, [post.id, trackView]);
 
   // Cleanup: close preview if index goes out of range after media edit
   useEffect(() => {
@@ -465,6 +466,7 @@ function PostCard({ post, onDeleted, onUpdated }) {
     });
 
     if (response.ok) {
+      setIsDeleted(true);
       onDeleted?.(post.id);
       return;
     }
@@ -517,6 +519,10 @@ function PostCard({ post, onDeleted, onUpdated }) {
     setShowComments(true);
   };
 
+  if (isDeleted) {
+    return null;
+  }
+
   return (
     <>
       <article className="emerald-panel emerald-panel-hover group w-full cursor-pointer overflow-hidden rounded-xl mb-4">
@@ -525,6 +531,8 @@ function PostCard({ post, onDeleted, onUpdated }) {
             <img
               src={post.avatar}
               alt={post.name}
+              loading="lazy"
+              decoding="async"
               className="h-11 w-11 shrink-0 rounded-full border border-emerald-300/20 bg-emerald-950/60 object-cover shadow-[0_0_20px_rgba(16,185,129,0.1)]"
             />
 
@@ -667,6 +675,8 @@ function PostCard({ post, onDeleted, onUpdated }) {
                           <img
                             src={item.url}
                             alt="media"
+                            loading="lazy"
+                            decoding="async"
                             className={isSingle ? "h-full max-h-full w-auto max-w-full object-contain mx-auto" : "h-full w-full object-cover"}
                           />
                         )}

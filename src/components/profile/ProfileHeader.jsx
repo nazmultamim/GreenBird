@@ -31,7 +31,7 @@ export default function ProfileHeader({
 
   const bannerUrl =
     user.banner ||
-    "https://images.unsplash.com/photo-1518779578993-ec3579fee39f";
+    "https://i.postimg.cc/CKfBT2BG/profile-cover.png";
 
   const joinedAt = user.joinedAt || "";
 

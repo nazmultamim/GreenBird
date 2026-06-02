@@ -104,7 +104,7 @@ export default async function PostPage({ params }) {
           {/* FIX: padding wrapper so PostCard isn't flush against the border */}
           <div className="p-4">
             {post ? (
-              <PostCard post={serializePost(post, currentUser?._id)} />
+              <PostCard post={serializePost(post, currentUser?._id)} trackView />
             ) : (
               <div className="py-10">
                 <p className="text-sm font-semibold text-white">Post not found</p>
