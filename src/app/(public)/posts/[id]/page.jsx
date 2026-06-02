@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import LeftSidebar from "../../../../components/layout/LeftSidebar";
 import RightSidebar from "../../../../components/layout/RightSidebar";
 import MobileTopNav from "../../../../components/layout/mobile/MobileTopNav";
@@ -8,7 +6,7 @@ import { getCurrentDbUser } from "../../../../lib/auth/current-user";
 import { connect } from "../../../../lib/mongodb/mongoes";
 import Post from "../../../../lib/models/post.model";
 import { serializePost } from "../../../../lib/posts/serialize-post";
-import BackButton from "@/components/ui/BackBtn";
+import BackButton from "../../../../components/ui/BackBtn";
 
 const BASE_URL = "https://green-bird-xi.vercel.app";
 const DEFAULT_OG = `${BASE_URL}/og-image.png`;

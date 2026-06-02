@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { ArrowLeft, X, Camera, Pen } from "lucide-react";
+import {X, Camera, Pen } from "lucide-react";
 import Link from "next/link";
 import { MdVerified } from "react-icons/md";
+import BackButton from "../ui/BackBtn";
 
 export default function ProfileHeader({
   user,
@@ -117,9 +118,7 @@ export default function ProfileHeader({
       {/* ================= HEADER ================= */}
       <section className="border-b border-white/10 text-white">
         <div className="flex items-center gap-4 px-4 py-3">
-          <Link href="/" className="rounded-full p-2 hover:bg-white/10">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
+          <BackButton />
 
           <div>
             <h2 className="text-lg font-semibold">{displayName}</h2>
