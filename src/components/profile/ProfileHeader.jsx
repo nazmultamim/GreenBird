@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import {X, Camera, Pen } from "lucide-react";
+import {X, Camera } from "lucide-react";
 import Link from "next/link";
 import { MdVerified } from "react-icons/md";
 import BackButton from "../ui/BackBtn";
@@ -146,7 +146,7 @@ export default function ProfileHeader({
               onClick={
                 isCurrentUser ? () => setEditing(true) : handleToggleFollow
               }
-              className={`mt-3 flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold transition
+              className={`mt-3 rounded-full px-4 py-1.5 text-sm font-semibold transition
                 ${isCurrentUser
                   ? "border border-accent/50 text-gray-300 hover:bg-accent/20"
                   : following
@@ -154,7 +154,7 @@ export default function ProfileHeader({
                     : "bg-white text-black hover:bg-gray-200"
                 }
               `}
-            > <Pen size={16} />
+            > 
               {isCurrentUser
                 ? "Edit profile"
                 : following

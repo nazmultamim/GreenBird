@@ -83,7 +83,7 @@ export default async function FollowingPage({ params }) {
                     key={u._id}
                     className="group relative overflow-hidden rounded-2xl border border-emerald-500/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-4 transition-all duration-300 hover:border-emerald-400/30 hover:bg-white/[0.06]"
                   >
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-center justify-between gap-4 w-full">
 
                       {/* AVATAR */}
                       <Link href={`/user/${u.username}`}>
@@ -106,12 +106,6 @@ export default async function FollowingPage({ params }) {
                             @{u.username}
                           </p>
                         </Link>
-
-                        {u.bio && (
-                          <p className="mt-2 line-clamp-2 text-sm text-emerald-100/70">
-                            {u.bio}
-                          </p>
-                        )}
                       </div>
 
                       {/* ACTION */}

@@ -29,7 +29,7 @@ export default function FollowButton({ username, initialFollowing = false, initi
       disabled={loading}
       className={`rounded-full px-3 py-1 text-sm font-semibold transition ${following ? "bg-emerald-400/10 text-emerald-100" : "bg-white/10 text-white"}`}
     >
-      {following ? `Following (${count})` : `Follow (${count})`}
+      {following ? `Following ${count}` : `Follow ${count}`}
     </button>
   );
 }

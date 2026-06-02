@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Search, MoreHorizontal, X, ShieldCheck, TrendingUp } from "lucide-react";
+import { useNavigationLoader } from "../ui/navigation-loader";
 
 const news = [
   {
@@ -94,8 +94,8 @@ const whoToFollow = [
 ];
 
 export default function RightSidebar() {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const { navigate } = useNavigationLoader();
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
@@ -103,7 +103,7 @@ export default function RightSidebar() {
     const searchTerm = String(searchQuery).trim();
     if (!searchTerm) return;
 
-    router.push(`/search/${encodeURIComponent(searchTerm)}`);
+    navigate(`/search/${encodeURIComponent(searchTerm)}`);
     setSearchQuery("");
   };
 

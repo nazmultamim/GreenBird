@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import PostCard from "../feed/PostCard";
 import FollowButton from "../profile/FollowButton";
 import {
@@ -11,102 +10,78 @@ import {
   UsersRound,
   Newspaper,
   ArrowUpRight,
-  Check,
   Flame,
 } from "lucide-react";
 import { MdVerified } from "react-icons/md";
 import BackButton from "../ui/BackBtn";
+import { useNavigationLoader } from "../ui/navigation-loader";
 
 const tabs = [
   { id: "posts", label: "Posts", icon: Newspaper },
   { id: "people", label: "People", icon: UsersRound },
 ];
 
-
-
-function SearchChip({ label, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white/85 transition hover:border-emerald-300/30 hover:bg-emerald-300/10 hover:text-white"
-    >
-      {label}
-    </button>
-  );
-}
-
 function PersonCard({ person }) {
   return (
     <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-[linear-gradient(145deg,rgba(255,255,255,0.05),rgba(2,20,16,0.88))] p-4 shadow-[0_20px_80px_rgba(0,0,0,0.18)] transition hover:border-emerald-300/25 hover:shadow-[0_24px_90px_rgba(4,120,87,0.18)]">
-      <div className="flex items-start gap-4">
-        <Link href={`/user/${person.username}`} className="shrink-0">
-          <img
-            src={person.avatar}
-            alt={person.displayName}
-            className="h-14 w-14 rounded-2xl object-cover ring-1 ring-white/10 transition group-hover:ring-emerald-300/30"
-          />
-        </Link>
+ 
+  <div className="flex items-center justify-between gap-4 w-full">
+    
+    
+    <div className="flex items-center gap-3 min-w-0 flex-1">
+      <Link href={`/user/${person.username}`} className="shrink-0">
+        <img
+          src={person.avatar}
+          alt={person.displayName}
+          className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover ring-1 ring-white/10 transition group-hover:ring-emerald-300/30"
+        />
+      </Link>
 
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <Link
-              href={`/user/${person.username}`}
-              className="truncate text-base font-semibold text-white transition hover:text-emerald-200"
-            >
-              {person.displayName}
-            </Link>
-            {person.verificationBadge && (
-              <span className="inline-flex text-emerald-300" title="Verified account">
-                <MdVerified size={18} />
-              </span>
-            )}
-          </div>
-          <p className="truncate text-sm text-white/50">@{person.username}</p>
-          {person.bio ? (
-            <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/70">
-              {person.bio}
-            </p>
-          ) : (
-            <p className="mt-2 text-sm leading-6 text-white/50">
-              A creator worth discovering.
-            </p>
-          )}
-
-          <div className="mt-3 flex flex-wrap gap-3 text-xs text-white/50">
-            <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-              {person.followersCount.toLocaleString()} followers
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-1.5">
+          <Link
+            href={`/user/${person.username}`}
+            className="truncate text-sm sm:text-base font-semibold text-white transition hover:text-emerald-200"
+          >
+            {person.displayName}
+          </Link>
+          {person.verificationBadge && (
+            <span className="inline-flex text-emerald-300 shrink-0" title="Verified account">
+              <MdVerified size={16} className="sm:w-[18px] sm:h-[18px]" />
             </span>
-            <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-              {person.followingCount.toLocaleString()} following
-            </span>
-          </div>
-        </div>
-
-        <div className="shrink-0">
-          {person.isCurrentUser ? (
-            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white/60">
-              You
-            </div>
-          ) : (
-            <FollowButton
-              username={person.username}
-              initialFollowing={person.isFollowing}
-              initialCount={person.followersCount}
-            />
           )}
         </div>
+        <p className="truncate text-xs sm:text-sm text-white/50">@{person.username}</p>
       </div>
     </div>
+
+ 
+    <div className="shrink-0">
+      {person.isCurrentUser ? (
+        <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-white/60">
+          You
+        </div>
+      ) : (
+        <FollowButton
+          username={person.username}
+          initialFollowing={person.isFollowing}
+          initialCount={person.followersCount}
+        />
+      )}
+    </div>
+
+  </div>
+</div>
   );
 }
 
+
 export default function SearchResults({ initialQuery = "" }) {
-  const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [activeTab, setActiveTab] = useState("posts");
   const [loading, setLoading] = useState(Boolean(initialQuery));
   const [error, setError] = useState("");
+  const { navigate } = useNavigationLoader();
   const [results, setResults] = useState({
     posts: [],
     people: [],
@@ -170,10 +145,10 @@ export default function SearchResults({ initialQuery = "" }) {
   const submitSearch = (event) => {
     event.preventDefault();
 
-    const nextQuery = query.trim();
+    const nextQuery = query.trim().replace(/^@+/, "");
     if (!nextQuery) return;
 
-    router.push(`/search/${encodeURIComponent(nextQuery)}`);
+    navigate(`/search/${encodeURIComponent(nextQuery)}`);
   };
 
   const renderedPosts = results.posts;
@@ -212,12 +187,12 @@ export default function SearchResults({ initialQuery = "" }) {
         </div>
       </section>
 
-      {query ? (
+      {initialQuery ? (
         <section className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(1,10,8,0.72))] shadow-[0_24px_100px_rgba(0,0,0,0.2)]">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-4 sm:px-5">
             <div>
               <p className="text-xs uppercase tracking-[0.28em] text-white/40">Results for</p>
-              <h2 className="mt-1 text-lg font-semibold text-white">{query}</h2>
+              <h2 className="mt-1 text-lg font-semibold text-white">{initialQuery}</h2>
             </div>
 
             <div className="flex items-center gap-2">
@@ -296,48 +271,7 @@ export default function SearchResults({ initialQuery = "" }) {
             )}
           </div>
         </section>
-      ) : (
-        <section className="grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
-          <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-5 shadow-[0_24px_100px_rgba(0,0,0,0.18)]">
-            <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.24em] text-white/40">
-              <ArrowUpRight className="h-4 w-4 text-emerald-300" />
-              Quick start
-            </div>
-            <h2 className="mt-3 text-2xl font-semibold text-white">Search by topic, name, or handle.</h2>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-white/60">
-              Use the top search bar to jump directly into a result set. Search pages share the same polished experience from the sidebar explore route and the dedicated search URLs.
-            </p>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.24em] text-white/35">Posts</p>
-                <p className="mt-2 text-sm text-white/70">Surface the latest discussions, creators, and ideas.</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.24em] text-white/35">People</p>
-                <p className="mt-2 text-sm text-white/70">Find profiles with matching names, handles, or bios.</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-5">
-            <p className="text-xs uppercase tracking-[0.24em] text-white/40">Suggestions</p>
-            <div className="mt-4 space-y-3">
-              {prompts.map((prompt) => (
-                <button
-                  key={prompt}
-                  type="button"
-                  onClick={() => router.push(`/search/${encodeURIComponent(prompt)}`)}
-                  className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-left transition hover:border-emerald-300/25 hover:bg-emerald-300/8"
-                >
-                  <span className="text-sm font-medium text-white/80">#{prompt}</span>
-                  <Check className="h-4 w-4 text-emerald-300" />
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      ) : null}
     </div>
   );
 }

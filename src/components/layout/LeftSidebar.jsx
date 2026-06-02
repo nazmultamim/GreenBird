@@ -119,7 +119,14 @@ export default function LeftSidebar() {
                 ? user?.username
                   ? `/user/${user.username}`
                   : "/profile"
-                : item.href;
+                : item.label === "Follow"
+                  ? user?.username
+                    ? `/user/${user.username}/following`
+                    : "/following"
+
+                  : item.label === "chat"
+                    ? "/chat"
+                    : item.href;
 
             return (
               <Link

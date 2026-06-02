@@ -2,13 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { useNavigationLoader } from "./navigation-loader";
 
 export default function BackButton() {
   const router = useRouter();
+  const { startLoading } = useNavigationLoader();
 
   return (
     <button
       onClick={() => {
+        startLoading();
         if (window.history.length > 1) {
           router.back();
         } else {

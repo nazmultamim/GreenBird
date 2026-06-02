@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Plus, Search, Menu } from "lucide-react";
 import MobileSidebar from "./MobileSidebar";
 import logo from "../../../../public/assets/logo.png";
@@ -14,8 +13,6 @@ export default function MobileTopNav() {
 
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
-
-  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,16 +86,17 @@ export default function MobileTopNav() {
         {/* RIGHT — Actions */}
         <div className="flex items-center gap-1">
           {/* Plus */}
-          <button
-            onClick={() => router.push("/createpost")}
+          <Link
+            href="/createpost"
             className="
               p-2 rounded-full
               hover:bg-white/10
               transition-colors text-white
             "
+            aria-label="Create post"
           >
             <Plus size={22} strokeWidth={2} />
-          </button>
+          </Link>
 
           {/* Search */}
           <Link

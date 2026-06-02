@@ -27,12 +27,12 @@ const sidebarNav = [
   { icon: Bell, label: "Notifications", href: "/notifications" },
   { icon: MessageSquare, label: "Chat", href: "/chat", badge: 5, },
   { icon: Gem, label: "Premium", href: "/premium", tag: "50% off", },
-  { icon: Settings, label: "Settings and privacy", href: "/settings" },
+  { icon: Settings, label: "Manage Profile", href: "/manage-profile" },
 ];
 
 export default function MobileSidebar({ open, onClose }) {
   const { user } = useUser();
-  const { signOut } = useClerk();
+  const { signOut, openUserProfile } = useClerk();
   const { unreadCount } = useNotifications();
   const { isVerified } = useVerificationBadge();
 
@@ -147,13 +147,25 @@ export default function MobileSidebar({ open, onClose }) {
                 ? user?.username
                   ? `/user/${user.username}`
                   : "/profile"
-                : item.href;
+                : item.label === "Follow"
+                  ? user?.username
+                    ? `/user/${user.username}/following`
+                    : "/following"
+                  : item.label === "chat"
+                    ? "/chat"
+                    : item.href;
 
             return (
               <Link
                 key={item.label}
                 href={linkHref}
-                onClick={onClose}
+                onClick={(e) => {
+                  if (item.label === "Manage Profile" && openUserProfile) {
+                    e.preventDefault();
+                    openUserProfile();
+                  }
+                  onClose();
+                }}
                 className="
                   flex items-center gap-5
                   px-4 py-3.5

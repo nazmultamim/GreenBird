@@ -1,6 +1,7 @@
 import "./globals.css";
 import { ClerkProvider, ClerkLoaded, ClerkLoading } from "@clerk/nextjs";
 import Loader from "../components/ui/lodaer";
+import { NavigationLoaderProvider } from "../components/ui/navigation-loader";
 import { NotificationProvider } from "../components/notifications/NotificationProvider";
 
 const BASE_URL = 'https://green-bird-xi.vercel.app';
@@ -57,7 +58,9 @@ export default function RootLayout({ children }) {
           </ClerkLoading>
 
           <ClerkLoaded>
-            <NotificationProvider>{children}</NotificationProvider>
+            <NavigationLoaderProvider>
+              <NotificationProvider>{children}</NotificationProvider>
+            </NavigationLoaderProvider>
           </ClerkLoaded>
         </ClerkProvider>
       </body>

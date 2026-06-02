@@ -37,7 +37,8 @@ function serializePerson(user, currentUser) {
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const query = String(searchParams.get("q") || "").trim();
+  const rawQuery = String(searchParams.get("q") || "").trim();
+  const query = rawQuery.replace(/^@+/, "").trim();
 
   if (!query) {
     return NextResponse.json({
@@ -71,6 +72,14 @@ export async function GET(request) {
         { firstName: pattern },
         { lastName: pattern },
         { bio: pattern },
+        {
+          $expr: {
+            $regexMatch: {
+              input: { $concat: ["$firstName", " ", "$lastName"] },
+              regex: pattern,
+            },
+          },
+        },
       ],
     })
       .select(

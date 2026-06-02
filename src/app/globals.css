@@ -735,3 +735,588 @@ textarea {
 }
 
 
+/* ── Clerk UserProfile Global Overrides ── */
+
+/* 1. Modal Backdrop & Wrapper */
+
+/* ── Clerk Content Area White Patch ── */
+
+
+.cl-scrollBox, 
+.cl-pageScrollBox, 
+.cl-page, 
+.cl-profilePage {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+
+.cl-internal-1dauvpw {
+  background: rgba(8, 20, 16, 0.88) !important;
+}
+
+/* ── Text Color & Visibility  ── */
+
+
+.cl-headerTitle,
+.cl-internal-1duq1xl {
+  color: #f8fafc !important;
+}
+
+
+.cl-internal-lzddlw,
+.cl-profileSectionTitleText {
+  color: #34d399 !important; 
+}
+
+
+.cl-internal-1omzvnx,
+.cl-userPreviewMainIdentifierText,
+.cl-internal-1h513jh,
+.cl-internal-53qr3s {
+  color: #f8fafc !important; /* অফ-হোয়াইট রিডেবল কালার */
+  opacity: 1 !important;
+}
+
+
+.cl-profileSectionPrimaryButton,
+.cl-internal-o3u9od,
+.cl-button {
+  color: #34d399 !important;
+}
+
+.cl-profileSectionPrimaryButton:hover {
+  color: #a7f3d0 !important;
+}
+
+/* ── Section Dividers / Borders ── */
+.cl-profileSection {
+  border-bottom: 1px solid rgba(16, 185, 129, 0.12) !important;
+  padding-bottom: 16px !important;
+  margin-bottom: 16px !important;
+}
+
+
+.cl-modalBackdrop {
+  background: rgba(2, 10, 8, 0.8) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.cl-modalContent {
+  border-radius: 28px !important;
+  border: 1px solid rgba(16, 185, 129, 0.16) !important;
+  overflow: hidden;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 2. Main Profile Card Box */
+.cl-cardBox {
+  background: rgba(8, 20, 16, 0.88) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 28px !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Premium gradient overlay */
+.cl-cardBox::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top right,
+    rgba(52, 211, 153, 0.08),
+    transparent 40%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 3. Left Sidebar / Navigation Bar */
+.cl-navbar {
+  background: rgba(4, 15, 12, 0.95) !important;
+  border-right: 1px solid rgba(16, 185, 129, 0.12) !important;
+  padding: 24px 16px !important;
+}
+
+/* Navigation Buttons */
+.cl-navbarButton {
+  border-radius: 14px !important;
+  padding: 10px 14px !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  transition: all 0.25s ease !important;
+  font-weight: 600 !important;
+}
+
+.cl-navbarButton:hover {
+  background: rgba(16, 185, 129, 0.08) !important;
+  color: #34d399 !important;
+}
+
+.cl-navbarButton[data-active="true"],
+.cl-navbarButton.cl-active {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(52, 211, 153, 0.25) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02) !important;
+}
+
+.cl-navbarButtonIcon {
+  color: inherit !important;
+}
+
+/* Mobile Navbar Button */
+.cl-navbarMobileMenuButton {
+  color: #34d399 !important;
+  font-weight: 600 !important;
+}
+
+/* 4. Headers & Titles */
+.cl-headerTitle,
+.cl-internal-11tf6lr {
+  color: #f8fafc !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+}
+
+.cl-internal-lzddlw {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Profile Section Layout Headers */
+.cl-profileSectionTitleText {
+  color: #34d399 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.12em !important;
+}
+
+/* 5. Profile Sections & Rows */
+.cl-profileSectionItem {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  margin-bottom: 12px !important;
+  transition: border-color 0.25s ease !important;
+}
+
+.cl-profileSectionItem:hover {
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Main Identifier Texts (Name, Email, Username) */
+.cl-userPreviewMainIdentifierText,
+.cl-internal-1omzvnx,
+.cl-internal-1h513jh {
+  color: #f8fafc !important;
+  font-weight: 600 !important;
+}
+
+.cl-internal-53qr3s {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Avatar Image Container */
+.cl-avatarBox {
+  border-radius: 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 6. Buttons (Ghost & Secondary Action Buttons) */
+.cl-profileSectionPrimaryButton,
+.cl-menuButton {
+  color: #34d399 !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  transition: all 0.25s ease !important;
+  border-radius: 12px !important;
+}
+
+.cl-profileSectionPrimaryButton:hover,
+.cl-menuButton:hover {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #a7f3d0 !important;
+}
+
+/* Close Button (Top Right) */
+.cl-modalCloseButton {
+  color: rgba(255, 255, 255, 0.4) !important;
+  transition: all 0.22s ease !important;
+  border-radius: 50% !important;
+}
+
+.cl-modalCloseButton:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #f8fafc !important;
+}
+
+/* 7. Badge Strategy (Primary Badge) */
+.cl-badge {
+  background: rgba(5, 150, 105, 0.14) !important;
+  color: #6ee7b7 !important;
+  border: 1px solid rgba(52, 211, 153, 0.18) !important;
+  border-radius: 999px !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  padding: 2px 10px !important;
+}
+
+/* 8. Footer Section */
+.cl-footer,
+.cl-internal-pe6vm4 {
+  background: rgba(4, 15, 12, 0.95) !important;
+  border-top: 1px solid rgba(16, 185, 129, 0.12) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.cl-internal-1scxde7 {
+  color: #34d399 !important;
+  opacity: 0.7;
+  transition: opacity 0.25s ease !important;
+}
+
+.cl-internal-1scxde7:hover {
+  opacity: 1 !important;
+}
+
+/* Scroll box optimization */
+.cl-scrollBox {
+  padding: 24px !important;
+}
+
+/* ── Clerk Delete Account & Danger Buttons ── */
+
+
+.cl-formButtonPrimary[data-color="danger"],
+.cl-internal-1wigng0 {
+  background: linear-gradient(135deg, #ef4444, #b91c1c) !important; /* লাল গ্রেডিয়েন্ট */
+  border: none !important;
+  border-radius: 14px !important;
+  color: #ffffff !important; /* সম্পূর্ণ সাদা টেক্সট */
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.03em !important;
+  height: 50px !important;
+  transition: all 0.25s ease !important;
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2) !important;
+}
+
+.cl-formButtonPrimary[data-color="danger"]:hover:not([disabled]),
+.cl-internal-1wigng0:hover:not([disabled]) {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #f87171, #dc2626) !important;
+  box-shadow: 0 16px 38px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* বাটন যখন ডিজেবলড থাকবে (যেমন: কনফার্মেশন টাইপ করার আগে) */
+.cl-formButtonPrimary[data-color="danger"]:disabled,
+.cl-internal-1wigng0:disabled {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ক্যানসেল বাটন (Cancel Button рядом) */
+.cl-formButtonReset,
+.cl-internal-1udjqat {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-weight: 600 !important;
+  transition: all 0.25s ease !important;
+}
+
+.cl-formButtonReset:hover,
+.cl-internal-1udjqat:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
+}
+
+
+/* ── Clerk Set Password Modal Overrides ── */
+
+/* 1. Main Action Card Container */
+.cl-actionCard,
+.cl-internal-1nbu1nh {
+  background: rgba(8, 20, 16, 0.9) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(16, 185, 129, 0.15) !important;
+  border-radius: 24px !important;
+  padding: 24px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 2. Header & Title */
+.cl-headerTitle__set,
+.cl-internal-1cua5eg {
+  color: #f8fafc !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* 3. Input Labels */
+.cl-formFieldLabel,
+.cl-internal-1n3co50 {
+  color: #34d399 !important; /* Emerald green label */
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  margin-bottom: 6px !important;
+}
+
+/* 4. Input Fields (Password & Confirm Password) */
+.cl-formFieldInput,
+.cl-input,
+.cl-internal-l67p1e,
+.cl-internal-sntdl1 {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  border-radius: 12px !important;
+  color: #f8fafc !important;
+  padding: 12px 14px !important;
+  font-size: 14px !important;
+  transition: all 0.22s ease !important;
+}
+
+.cl-formFieldInput:focus,
+.cl-input:focus {
+  background: rgba(16, 185, 129, 0.05) !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15) !important;
+}
+
+/* Input Fields with Error State */
+.cl-formFieldInput[data-feedback="error"],
+.cl-input.cl-error {
+  border-color: rgba(239, 68, 68, 0.4) !important;
+}
+
+.cl-formFieldInput[data-feedback="error"]:focus,
+.cl-input.cl-error:focus {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Eye Button (Show/Hide Password) */
+.cl-formFieldInputShowPasswordButton,
+.cl-internal-f7en1o {
+  color: rgba(52, 211, 153, 0.7) !important;
+}
+
+.cl-formFieldInputShowPasswordButton:hover,
+.cl-internal-f7en1o:hover {
+  color: #34d399 !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+}
+
+/* 5. Error & Info Feedback Text */
+.cl-formFieldErrorText,
+.cl-internal-x1pxf1 {
+  color: #f87171 !important; /* Softer red for dark mode */
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.cl-formFieldInfoText,
+.cl-internal-o003s3,
+.cl-internal-5ur8x {
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 12px !important;
+}
+
+/* 6. Checkbox Section (Sign out of other devices) */
+.cl-checkbox,
+.cl-internal-k11nvd {
+  accent-color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  background: rgba(8, 20, 16, 0.9) !important;
+  border-radius: 6px !important;
+  width: 18px !important;
+  height: 18px !important;
+  cursor: pointer;
+}
+
+.cl-formFieldRadioLabelTitle,
+.cl-internal-13ucxrr {
+  color: #f8fafc !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+}
+
+.cl-formFieldRadioLabelDescription,
+.cl-internal-n1i35g {
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 12px !important;
+}
+
+/* 7. Action Buttons (Save & Cancel) */
+.cl-formButtonPrimary,
+.cl-internal-w5ce15 {
+  background: #10b981 !important; /* Solid emerald green */
+  border: none !important;
+  border-radius: 12px !important;
+  color: #020a08 !important; /* Dark text on bright button for high contrast */
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  padding: 10px 20px !important;
+  transition: all 0.22s ease !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
+}
+
+.cl-formButtonPrimary:hover:not([disabled]),
+.cl-internal-w5ce15:hover:not([disabled]) {
+  background: #34d399 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(52, 211, 153, 0.4) !important;
+}
+
+/* Disabled State for Save Button */
+.cl-formButtonPrimary:disabled,
+.cl-internal-w5ce15:disabled {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Cancel Button */
+.cl-formButtonReset,
+.cl-internal-1udjqat {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  transition: all 0.22s ease !important;
+}
+
+.cl-formButtonReset:hover,
+.cl-internal-1udjqat:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
+}
+
+
+/* ── Clerk Active Devices Section ── */
+
+
+.cl-activeDeviceListItem .cl-internal-rppsgi {
+  color: #f8fafc !important; 
+  font-weight: 700 !important;
+  font-size: 15px !important;
+}
+
+
+.cl-activeDeviceListItem .cl-internal-lzddlw {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 13px !important;
+}
+
+
+.cl-menuButtonEllipsis,
+.cl-internal-1kpxi77 {
+  color: rgba(52, 211, 153, 0.7) !important; 
+  transition: all 0.22s ease !important;
+}
+
+.cl-menuButtonEllipsis:hover,
+.cl-internal-1kpxi77:hover {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #34d399 !important;
+}
+
+
+.cl-popover,
+.cl-internal-196m4as,
+div[data-portal="true"] [role="menu"] {
+  background: rgba(8, 20, 16, 0.95) !important; 
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  padding: 4px !important;
+}
+
+
+.cl-menuItem,
+.cl-internal-1scxde7,
+div[data-portal="true"] button[role="menuitem"] {
+  background: #ff4e4e  !important;
+  color: #ffffff !important; 
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  padding: 10px 16px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  width: 100% !important;
+  text-align: left !important;
+}
+
+.cl-menuItem:hover,
+div[data-portal="true"] button[role="menuitem"]:hover {
+  background: rgba(239, 68, 68, 0.1) !important; 
+  color: #ef4444 !important;
+}
+
+
+.cl-activeDeviceIcon path {
+  fill: rgba(255, 255, 255, 0.7) !important;
+}
+
+
+/* ── Clerk Mobile Navigation Top Bar  ── */
+
+
+.cl-navbarMobileMenuRow,
+.cl-internal-1x28sfr {
+  background: rgba(8, 20, 16, 0.9) !important; 
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.15) !important; 
+  padding: 12px 16px !important;
+}
+
+
+.cl-navbarMobileMenuButton,
+.cl-internal-1vq1nvl {
+  color: #34d399 !important; 
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: transparent !important;
+}
+
+.cl-navbarMobileMenuButton:hover,
+.cl-internal-1vq1nvl:hover {
+  color: #a7f3d0 !important; 
+  background: rgba(16, 185, 129, 0.08) !important;
+}
+
+
+.cl-navbarMobileMenuButtonIcon,
+.cl-navbarMobileMenuButton svg,
+.cl-internal-oaq42g {
+  color: #34d399 !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+
+.cl-navbarMobileMenuCloseButton,
+.cl-internal-161bghy {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.cl-navbarMobileMenuCloseButton:hover {
+  color: #ef4444 !important; 
+}

@@ -1,4 +1,5 @@
 import { Crown, Sparkles, ShieldCheck, TrendingUp, Rocket, BadgeCheck } from "lucide-react";
+import BackButton from "../../components/ui/BackBtn"; 
 
 const benefits = [
   {
@@ -32,10 +33,13 @@ const highlights = [
 
 export default function PremiumPage() {
   return (
-    <main className="min-h-screen bg-[#020b15] px-4 py-10 text-white sm:px-6 lg:px-8">
+    <main className="min-h-screen px-4 py-10 text-white sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
+        
         <div className="grid gap-10 lg:grid-cols-[1.3fr_0.9fr] lg:items-center">
+          
           <section className="space-y-8">
+            <BackButton className="mb-24" />
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-2 rounded-full border border-emerald-300/15 bg-emerald-300/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.24em] text-emerald-200">
                 <Crown className="h-4 w-4 text-emerald-300" />
