@@ -3,8 +3,8 @@
 
 
 import { useMemo, useRef, useState, useEffect } from "react";
+import EmojiPicker from "emoji-picker-react";
 import { Image, Smile, Calendar, MapPin, X, Play, Pause, Volume2, VolumeX } from "lucide-react";
-import { BiPoll } from "react-icons/bi";
 import { IoEarth } from "react-icons/io5";
 import { useUser } from "@clerk/nextjs";
 
@@ -133,6 +133,7 @@ function CreatePost({ onPost }) {
   const [isFocused, setIsFocused] = useState(false);
   const [mediaFiles, setMediaFiles] = useState([]);
   const [isPosting, setIsPosting] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false);
   const [error, setError] = useState("");
   const { user } = useUser();
 
@@ -140,11 +141,11 @@ function CreatePost({ onPost }) {
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  const remaining  = MAX_LENGTH - text.length;
-  const progress   = Math.min(text.length / MAX_LENGTH, 1);
+  const remaining = MAX_LENGTH - text.length;
+  const progress = Math.min(text.length / MAX_LENGTH, 1);
   const isOverLimit = remaining < 0;
-  const isEmpty    = !text.trim() && mediaFiles.length === 0;
-  const canPost    = !isEmpty && !isOverLimit && !isPosting;
+  const isEmpty = !text.trim() && mediaFiles.length === 0;
+  const canPost = !isEmpty && !isOverLimit && !isPosting;
 
   const progressColor = useMemo(() => {
     if (isOverLimit) return "#F4212E";
@@ -152,9 +153,9 @@ function CreatePost({ onPost }) {
     return "#34d399";
   }, [remaining, isOverLimit]);
 
-  const radius       = 10;
+  const radius = 10;
   const circumference = 2 * Math.PI * radius;
-  const dashOffset   = circumference - progress * circumference;
+  const dashOffset = circumference - progress * circumference;
 
   /* ── auto-resize textarea ── */
   useEffect(() => {
@@ -163,6 +164,25 @@ function CreatePost({ onPost }) {
     el.style.height = "auto";
     el.style.height = el.scrollHeight + "px";
   }, [text]);
+
+  useEffect(() => {
+    if (!showEmoji) return;
+
+    const handleClickOutside = (event) => {
+      const picker = document.getElementById("create-post-emoji-picker");
+      const toggle = document.querySelector("[data-emoji-toggle]");
+      if (
+        picker &&
+        !picker.contains(event.target) &&
+        !toggle?.contains(event.target)
+      ) {
+        setShowEmoji(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showEmoji]);
 
   /* ── handlers ── */
   const handlePost = async () => {
@@ -244,7 +264,7 @@ function CreatePost({ onPost }) {
         return;
       }
 
-      const url  = URL.createObjectURL(file);
+      const url = URL.createObjectURL(file);
       const type = file.type.startsWith("video/") ? "video" : "image";
       setMediaFiles((prev) => [...prev, { file, url, type, name: file.name }]);
     });
@@ -258,17 +278,29 @@ function CreatePost({ onPost }) {
     });
   };
 
-  const handlePoll     = () => alert("Poll coming soon");
-  const handleEmoji    = () => alert("Emoji picker coming soon");
+
+  const handleEmoji = () => {
+    setShowEmoji((prev) => !prev);
+  };
+
+  const onEmojiClick = (emojiData, event) => {
+    const emoji = emojiData?.emoji ?? event?.emoji ?? emojiData?.unified ?? "";
+    if (!emoji) return;
+
+    setText((prev) => prev + emoji);
+    setShowEmoji(false);
+    textareaRef.current?.focus();
+  };
+
+
   const handleSchedule = () => alert("Schedule coming soon");
   const handleLocation = () => alert("Location coming soon");
 
   const LEFT_ICONS = [
-    { icon: Image,    label: "Add image",   onClick: handleImageClick, disabled: mediaFiles.length >= 4 },
-    { icon: BiPoll,   label: "Add poll",    onClick: handlePoll,       disabled: false },
-    { icon: Smile,    label: "Add emoji",   onClick: handleEmoji,      disabled: false },
-    { icon: Calendar, label: "Schedule",    onClick: handleSchedule,   disabled: false },
-    { icon: MapPin,   label: "Add location",onClick: handleLocation,   disabled: false },
+    { icon: Image, label: "Add image", onClick: handleImageClick, disabled: mediaFiles.length >= 4 },
+    { icon: Smile, label: "Add emoji", onClick: handleEmoji, disabled: false },
+    { icon: Calendar, label: "Schedule", onClick: handleSchedule, disabled: false },
+    { icon: MapPin, label: "Add location", onClick: handleLocation, disabled: false },
   ];
 
   const gridClass = { 1: "grid-cols-1", 2: "grid-cols-2", 3: "grid-cols-2", 4: "grid-cols-2" }[mediaFiles.length] ?? "grid-cols-2";
@@ -356,9 +388,8 @@ function CreatePost({ onPost }) {
               {mediaFiles.map((file, index) => (
                 <div
                   key={index}
-                  className={`relative overflow-hidden bg-zinc-900 ${
-                    mediaFiles.length === 3 && index === 0 ? "row-span-2" : ""
-                  }`}
+                  className={`relative overflow-hidden bg-zinc-900 ${mediaFiles.length === 3 && index === 0 ? "row-span-2" : ""
+                    }`}
                   style={{ aspectRatio: mediaFiles.length === 1 ? "16/9" : "1/1" }}
                 >
                   {file.type === "video" ? (
@@ -398,16 +429,32 @@ function CreatePost({ onPost }) {
           <div className="flex items-center justify-between py-3">
 
             {/* LEFT ICONS */}
-            <div className="flex items-center gap-0.5">
+            <div className="flex items-center gap-0.5 relative">
+              {showEmoji && (
+                <div
+                  id="create-post-emoji-picker"
+                  className="absolute top-12 left-0 z-50 w-[360px] rounded-3xl "
+                >
+                  
+                  <EmojiPicker
+                    onEmojiClick={onEmojiClick}
+                    theme="dark"
+                    width={350}
+                    height={380}
+                    searchDisabled={false}
+                    skinTonesDisabled
+                  />
+                </div>
+              )}
               {LEFT_ICONS.map(({ icon: Icon, label, onClick, disabled }) => (
                 <button
                   key={label}
                   aria-label={label}
                   onClick={onClick}
+                  data-emoji-toggle={label === "Add emoji" ? "true" : undefined}
                   disabled={disabled}
-                  className={`group rounded-full p-2 transition-colors cursor-pointer ${
-                    disabled ? "cursor-not-allowed opacity-30" : "hover:bg-emerald-300/10"
-                  }`}
+                  className={`group rounded-full p-2 transition-colors cursor-pointer ${disabled ? "cursor-not-allowed opacity-30" : "hover:bg-emerald-300/10"
+                    }`}
                 >
                   <Icon size={22} strokeWidth={1.75} className="text-emerald-100/70 transition-transform group-hover:scale-110 group-hover:text-emerald-200" />
                 </button>
@@ -453,11 +500,10 @@ function CreatePost({ onPost }) {
               <button
                 onClick={handlePost}
                 disabled={!canPost}
-                className={`min-w-[72px] rounded-full px-4 py-[9px] text-[15px] font-bold transition-all duration-200 ${
-                  canPost
+                className={`min-w-[72px] rounded-full px-4 py-[9px] text-[15px] font-bold transition-all duration-200 ${canPost
                     ? "premium-button text-white"
                     : "cursor-not-allowed bg-white/10 text-white/40"
-                }`}
+                  }`}
               >
                 {isPosting ? "Posting" : "Post"}
               </button>

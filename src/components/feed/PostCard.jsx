@@ -59,6 +59,39 @@ function formatRelativeTime(value) {
   });
 }
 
+function linkifyText(text = "") {
+  const urlPattern = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = urlPattern.exec(text)) !== null) {
+    const url = match[0];
+    const start = match.index;
+    const end = start + url.length;
+    const hasProtocol = url.startsWith("http://") || url.startsWith("https://");
+    const href = hasProtocol ? url : `https://${url}`;
+
+    parts.push(text.slice(lastIndex, start));
+    parts.push(
+      <a
+        key={`${start}-${href}`}
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-emerald-300 underline transition hover:text-emerald-100"
+      >
+        {url}
+      </a>
+    );
+
+    lastIndex = end;
+  }
+
+  parts.push(text.slice(lastIndex));
+  return parts;
+}
+
 function CustomVideoPlayer({ src, className = "" }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -792,7 +825,7 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
             </div>
           ) : (
             <p className="mt-1 whitespace-pre-wrap text-[15px] leading-relaxed text-emerald-50/95">
-              {post.text}
+              {linkifyText(post.text)}
             </p>
           )}
 
