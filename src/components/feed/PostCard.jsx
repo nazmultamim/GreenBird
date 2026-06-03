@@ -6,8 +6,6 @@ import {
   MessageCircle,
   Repeat2,
   Heart,
-  BarChart2,
-  Bookmark,
   Share,
   MoreHorizontal,
   Trash2,
@@ -304,8 +302,7 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
   const [likeCount, setLikeCount] = useState(post.likes ?? 0);
   const [retweeted, setRetweeted] = useState(false);
   const [rtCount, setRtCount] = useState(post.retweets ?? 0);
-  const [bookmarked, setBookmarked] = useState(false);
-  const [viewCount, setViewCount] = useState(post.views ?? 0);
+  const [viewCount, setViewCount] = useState(Number(post.views ?? 0));
   const [comments, setComments] = useState(post.comments ?? []);
   const [commentCount, setCommentCount] = useState(post.replies ?? 0);
   const [commentText, setCommentText] = useState("");
@@ -336,6 +333,10 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
     return () => window.clearInterval(interval);
   }, [post.createdAt, post.time]);
 
+  useEffect(() => {
+    setViewCount(Number(post.views ?? 0));
+  }, [post.id, post.views]);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     if (!menuOpen) return;
@@ -349,16 +350,30 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
   }, [menuOpen]);
 
   useEffect(() => {
-    if (!trackView || !post.id || String(post.id).length !== 24) return;
+    if (!trackView || !post.id) return;
 
-    fetch(`/api/posts/${post.id}/view`, { method: "POST" })
-      .then((response) => response.json())
-      .then((data) => {
+    const controller = new AbortController();
+
+    async function incrementViews() {
+      try {
+        const response = await fetch(`/api/posts/${post.id}/view`, {
+          method: "POST",
+          signal: controller.signal,
+        });
+
+        if (!response.ok) return;
+        const data = await response.json();
+
         if (typeof data.views === "number") {
           setViewCount(data.views);
         }
-      })
-      .catch(() => { });
+      } catch {
+        // ignore fetch failures or aborts
+      }
+    }
+
+    incrementViews();
+    return () => controller.abort();
   }, [post.id, trackView]);
 
   // Cleanup: close preview if index goes out of range after media edit
@@ -405,7 +420,6 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
       icon: MessageCircle,
       count: commentCount,
       activeColor: "text-sky-400",
-      hoverBg: "hover:bg-sky-400/10",
       active: showComments,
       onClick: () => setShowComments((value) => !value),
     },
@@ -413,7 +427,6 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
       icon: Repeat2,
       count: rtCount,
       activeColor: "text-emerald-400",
-      hoverBg: "hover:bg-emerald-400/10",
       active: retweeted,
       onClick: handleRt,
     },
@@ -421,17 +434,15 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
       icon: Heart,
       count: likeCount,
       activeColor: "text-pink-500",
-      hoverBg: "hover:bg-pink-500/10",
       active: liked,
       onClick: handleLike,
     },
     {
-      icon: BarChart2,
-      count: viewCount,
-      activeColor: "text-sky-400",
-      hoverBg: "hover:bg-sky-400/10",
+      icon: Share,
+      count: null,
+      activeColor: "text-emerald-300",
       active: false,
-      onClick: () => { },
+      onClick: handleShare,
     },
   ];
 
@@ -454,13 +465,13 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
     setPreviewIndex(index);
   };
 
-  const getPostUrl = () => {
+  function getPostUrl() {
     if (typeof window === "undefined") return `/posts/${post.id}`;
     return `${window.location.origin}/posts/${post.id}`;
-  };
+  }
 
-  const handleShare = async (event) => {
-    event.stopPropagation();
+  async function handleShare(event) {
+    event?.stopPropagation?.();
 
     const url = getPostUrl();
     const shareData = {
@@ -487,7 +498,7 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
     }
 
     window.setTimeout(() => setShareStatus(""), 1800);
-  };
+  }
 
   const handleDelete = async (event) => {
     event.stopPropagation();
@@ -912,51 +923,37 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
         )}
 
         <div className="px-4 pb-3 pt-2">
-          <div className="flex items-center justify-between text-xs font-medium text-emerald-100/42">
+          <div className="flex items-center justify-between gap-3 text-xs font-medium text-emerald-100/42">
             <span>{likeCount > 0 ? `${formatCount(likeCount)} reactions` : "Be first to react"}</span>
-            <span>
-              {commentCount > 0 ? `${formatCount(commentCount)} comments` : "No comments"}
-              {viewCount > 0 ? ` · ${formatCount(viewCount)} views` : ""}
-            </span>
+            <div className="flex items-center gap-2">
+              <span>{commentCount > 0 ? `${formatCount(commentCount)} comments` : "No comments"}</span>
+              <span>·</span>
+              <span>{Number.isFinite(viewCount) ? `${formatCount(viewCount)} views` : "0 views"}</span>
+            </div>
           </div>
 
           {/* Actions */}
-          <div className="mt-2 grid grid-cols-6 border-y border-emerald-300/12 py-1">
-            {actions.map(({ icon: Icon, count, activeColor, hoverBg, active, onClick }, i) => (
+          <div className="mt-2 grid grid-cols-4 gap-2 border-y border-emerald-300/12 py-2">
+            {actions.map(({ icon: Icon, count, activeColor, active, onClick }, i) => (
               <button
                 key={i}
-                onClick={(e) => { e.stopPropagation(); onClick(); }}
-                className={`flex items-center justify-center gap-1.5 rounded-md px-2 py-2 text-xs font-semibold text-emerald-100/58 transition-colors
-                  ${hoverBg} ${active ? activeColor : "hover:text-current"}`}
+                onClick={(e) => { e.stopPropagation(); onClick?.(e); }}
+                aria-label={Icon === MessageCircle ? "Comments" : Icon === Repeat2 ? "Repost" : Icon === Heart ? "Like" : "Share post"}
+                className={`flex h-10 items-center justify-center gap-1.5 rounded-full border border-emerald-300/10 bg-white/[0.03] px-3 text-xs font-semibold text-emerald-100/60 transition-all
+                  hover:border-emerald-300/25 hover:bg-emerald-300/10 ${active ? `border-current/30 ${activeColor} bg-current/10` : ""}`}
               >
                 <Icon
-                  size={17}
-                  className={active ? activeColor : ""}
-                  fill={active && (i === 2) ? "currentColor" : "none"}
+                  size={16}
+                  className={active ? activeColor : "text-emerald-100/70"}
+                  fill={active && Icon === Heart ? "currentColor" : "none"}
                 />
                 {count > 0 && (
-                  <span className={active ? activeColor : ""}>{formatCount(count)}</span>
+                  <span className={`tabular-nums ${active ? activeColor : "text-emerald-100/70"}`}>
+                    {formatCount(count)}
+                  </span>
                 )}
               </button>
             ))}
-
-            <div className="col-span-2 grid grid-cols-2">
-              <button
-                onClick={(e) => { e.stopPropagation(); setBookmarked(p => !p); }}
-                className={`flex items-center justify-center rounded-md p-2 text-emerald-100/58 transition-colors hover:bg-emerald-300/10 hover:text-emerald-300
-                  ${bookmarked ? "text-emerald-300" : ""}`}
-                aria-label="Bookmark post"
-              >
-                <Bookmark size={17} fill={bookmarked ? "currentColor" : "none"} />
-              </button>
-              <button
-                onClick={handleShare}
-                className="flex items-center justify-center rounded-md p-2 text-emerald-100/58 transition-colors hover:bg-emerald-300/10 hover:text-emerald-300"
-                aria-label="Share post"
-              >
-                <Share size={17} />
-              </button>
-            </div>
           </div>
 
           {shareStatus && (

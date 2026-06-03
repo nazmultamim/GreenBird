@@ -5,7 +5,11 @@ import Post from "../../../../../lib/models/post.model";
 export async function POST(_request, { params }) {
   await connect();
 
-  const { id } = await params;
+  const { id } = params;
+  if (!id) {
+    return NextResponse.json({ error: "Missing post id" }, { status: 400 });
+  }
+
   const post = await Post.findByIdAndUpdate(
     id,
     { $inc: { views: 1 } },
@@ -16,5 +20,5 @@ export async function POST(_request, { params }) {
     return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
 
-  return NextResponse.json({ views: post.views });
+  return NextResponse.json({ views: post.views ?? 0 });
 }
