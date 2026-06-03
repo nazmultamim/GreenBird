@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentDbUser } from "../../../lib/auth/current-user";
 import { connect } from "../../../lib/mongodb/mongoes";
+import "../../../lib/models/post.model";
 import Notification from "../../../lib/models/notification.model";
 import { markNotificationsRead } from "../../../lib/notifications/notification-service";
 

@@ -58,10 +58,17 @@ export function serializePost(post, currentUserId) {
     comments: (post.comments || []).map((comment) => ({
       id: comment._id.toString(),
       comment: comment.comment,
+      userId: comment.user?.toString?.() || comment.user?._id?.toString?.() || "",
       name: comment.name,
       username: comment.username,
       profileImg: comment.profileImg || "/default-avatar.png",
       createdAt: comment.createdAt?.toISOString?.() || comment.createdAt,
+      canDelete: Boolean(
+        currentId && (
+          userId === currentId ||
+          (comment.user?.toString?.() || comment.user?._id?.toString?.()) === currentId
+        )
+      ),
     })),
     createdAt: post.createdAt?.toISOString?.() || post.createdAt,
     time: formatRelativeTime(post.createdAt),

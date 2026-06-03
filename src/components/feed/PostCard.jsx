@@ -297,7 +297,7 @@ function MediaPreview({ visibleMedia, previewIndex, setPreviewIndex }) {
   );
 }
 
-function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
+function PostCard({ post, onDeleted, onUpdated, trackView = true }) {
   const [liked, setLiked] = useState(post.liked ?? false);
   const [likeCount, setLikeCount] = useState(post.likes ?? 0);
   const [retweeted, setRetweeted] = useState(false);
@@ -312,10 +312,13 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
   const [editMedia, setEditMedia] = useState(post.media || []);
   const [error, setError] = useState("");
   const [shareStatus, setShareStatus] = useState("");
+  const [deletingCommentId, setDeletingCommentId] = useState("");
   const [previewIndex, setPreviewIndex] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const menuRef = useRef(null);
+  const cardRef = useRef(null);
+  const hasTrackedViewRef = useRef(false);
   const [timeLabel, setTimeLabel] = useState(
     post.createdAt ? formatRelativeTime(post.createdAt) : post.time || "now"
   );
@@ -350,7 +353,7 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
   }, [menuOpen]);
 
   useEffect(() => {
-    if (!trackView || !post.id) return;
+    if (!trackView || !post.id || hasTrackedViewRef.current) return;
 
     const controller = new AbortController();
 
@@ -372,8 +375,34 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
       }
     }
 
-    incrementViews();
-    return () => controller.abort();
+    if (typeof IntersectionObserver === "undefined") {
+      hasTrackedViewRef.current = true;
+      incrementViews();
+      return () => controller.abort();
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (!entry?.isIntersecting || hasTrackedViewRef.current) return;
+
+        hasTrackedViewRef.current = true;
+        observer.disconnect();
+        incrementViews();
+      },
+      {
+        threshold: 0.55,
+      }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+      controller.abort();
+    };
   }, [post.id, trackView]);
 
   // Cleanup: close preview if index goes out of range after media edit
@@ -563,13 +592,43 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
     setShowComments(true);
   };
 
+  const handleDeleteComment = async (event, commentId) => {
+    event.stopPropagation();
+
+    if (!post.id || !commentId) return;
+
+    setDeletingCommentId(commentId);
+
+    try {
+      const response = await fetch(`/api/posts/${post.id}/comments/${commentId}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Comment could not be deleted.");
+      }
+
+      setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+      if (typeof data.replies === "number") {
+        setCommentCount(data.replies);
+      } else {
+        setCommentCount((prev) => Math.max(0, prev - 1));
+      }
+    } catch (err) {
+      setError(err.message || "Comment could not be deleted.");
+    } finally {
+      setDeletingCommentId("");
+    }
+  };
+
   if (isDeleted) {
     return null;
   }
 
   return (
     <>
-      <article className="emerald-panel emerald-panel-hover group w-full cursor-pointer overflow-hidden rounded-xl mb-4">
+      <article ref={cardRef} className="emerald-panel emerald-panel-hover group w-full cursor-pointer overflow-hidden rounded-xl mb-4">
         <div className="px-4 pt-4">
           <div className="flex items-start gap-3">
             <img
@@ -981,13 +1040,13 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
                 </button>
               </form>
               {comments.map((comment) => (
-                <div key={comment.id} className="flex gap-2 border-t border-emerald-300/12 pt-3">
+                <div key={comment.id} className="relative flex gap-2 border-t border-emerald-300/12 pt-3">
                   <img
                     src={comment.profileImg}
                     alt={comment.name}
                     className="h-8 w-8 rounded-full object-cover"
                   />
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="text-xs text-zinc-500">
                       <span className="font-bold text-white">{comment.name}</span>{" "}
                       @{comment.username}
@@ -996,6 +1055,22 @@ function PostCard({ post, onDeleted, onUpdated, trackView = false }) {
                       {comment.comment}
                     </p>
                   </div>
+                  {comment.canDelete && (
+                    <button
+                      type="button"
+                      onClick={(event) => handleDeleteComment(event, comment.id)}
+                      disabled={deletingCommentId === comment.id}
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-emerald-100/45 transition hover:bg-red-500/10 hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-50"
+                      aria-label="Delete comment"
+                      title="Delete comment"
+                    >
+                      {deletingCommentId === comment.id ? (
+                        <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                      ) : (
+                        <Trash2 size={14} />
+                      )}
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

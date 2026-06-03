@@ -52,16 +52,23 @@ export async function POST(request, { params }) {
   }
 
   const savedComment = post.comments[post.comments.length - 1];
+  const canDelete = Boolean(
+    currentUser &&
+    (post.user?.toString?.() === currentUser._id.toString() ||
+      savedComment.user?.toString?.() === currentUser._id.toString())
+  );
 
   return NextResponse.json(
     {
       comment: {
         id: savedComment._id.toString(),
         comment: savedComment.comment,
+        userId: savedComment.user?.toString?.() || currentUser._id.toString(),
         name: savedComment.name,
         username: savedComment.username,
         profileImg: savedComment.profileImg || "/default-avatar.png",
         createdAt: savedComment.createdAt,
+        canDelete,
       },
       replies: post.comments.length,
     },

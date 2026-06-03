@@ -5,7 +5,7 @@ import Post from "../../../../../lib/models/post.model";
 export async function POST(_request, { params }) {
   await connect();
 
-  const { id } = params;
+  const { id } = await params;
   if (!id) {
     return NextResponse.json({ error: "Missing post id" }, { status: 400 });
   }
