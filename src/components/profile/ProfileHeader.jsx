@@ -52,6 +52,17 @@ export default function ProfileHeader({
 
       setFollowing(data.followed);
       setFollowers(data.followersCount);
+      try {
+        const meRes = await fetch("/api/users/me");
+        if (meRes.ok) {
+          const meData = await meRes.json();
+          const followingCount = Number(meData.user?.following?.length ?? 0);
+          const followersCount = Number(data.followersCount ?? 0);
+          window.dispatchEvent(new CustomEvent("user-counts-updated", { detail: { followersCount, followingCount } }));
+        }
+      } catch (e) {
+        console.error("Error fetching /api/users/me after follow toggle", e);
+      }
     } catch (err) {
       setError(err.message || "Action failed");
     } finally {

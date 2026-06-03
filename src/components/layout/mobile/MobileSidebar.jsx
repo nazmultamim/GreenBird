@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { useVerificationBadge } from "../../../lib/hooks/useVerificationBadge";
@@ -36,6 +36,9 @@ export default function MobileSidebar({ open, onClose }) {
   const { unreadCount } = useNotifications();
   const { isVerified } = useVerificationBadge();
 
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+
   /* Lock body scroll while open */
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -48,6 +51,38 @@ export default function MobileSidebar({ open, onClose }) {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
+
+  /* Fetch follower/following counts for current user */
+  useEffect(() => {
+    let mounted = true;
+    const fetchCounts = async () => {
+      try {
+        const res = await fetch("/api/users/me");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!mounted) return;
+        setFollowersCount(Number(data.user?.followers?.length ?? 0));
+        setFollowingCount(Number(data.user?.following?.length ?? 0));
+      } catch (err) {
+        console.error("Error fetching user counts:", err);
+      }
+    };
+
+    fetchCounts();
+    return () => { mounted = false; };
+  }, []);
+
+  /* Listen for updates from follow actions (optimistic / external) */
+  useEffect(() => {
+    const handler = (e) => {
+      const d = e?.detail || {};
+      if (typeof d.followersCount === "number") setFollowersCount(d.followersCount);
+      if (typeof d.followingCount === "number") setFollowingCount(d.followingCount);
+    };
+
+    window.addEventListener("user-counts-updated", handler);
+    return () => window.removeEventListener("user-counts-updated", handler);
+  }, []);
 
   return (
     <>
@@ -122,14 +157,14 @@ export default function MobileSidebar({ open, onClose }) {
               href={user?.username ? `/user/${user.username}/following` : "/following"}
               className="flex items-center gap-1 hover:underline"
             >
-              <span className="text-white font-bold text-sm">1</span>
+              <span className="text-white font-bold text-sm">{followingCount}</span>
               <span className="text-zinc-500 text-sm">Following</span>
             </Link>
             <Link
               href={user?.username ? `/user/${user.username}/followers` : "/followers"}
               className="flex items-center gap-1 hover:underline"
             >
-              <span className="text-white font-bold text-sm">0</span>
+              <span className="text-white font-bold text-sm">{followersCount}</span>
               <span className="text-zinc-500 text-sm">Followers</span>
             </Link>
           </div>

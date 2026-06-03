@@ -16,6 +16,17 @@ export default function FollowButton({ username, initialFollowing = false, initi
       if (!res.ok) throw new Error(data?.error || "Failed");
       setFollowing(Boolean(data.followed));
       setCount(Number(data.followersCount ?? count));
+      try {
+        const meRes = await fetch("/api/users/me");
+        if (meRes.ok) {
+          const meData = await meRes.json();
+          const followingCount = Number(meData.user?.following?.length ?? 0);
+          const followersCount = Number(data.followersCount ?? 0);
+          window.dispatchEvent(new CustomEvent("user-counts-updated", { detail: { followersCount, followingCount } }));
+        }
+      } catch (e) {
+        console.error("Error fetching /api/users/me after follow toggle", e);
+      }
     } catch (err) {
       console.error(err);
     } finally {
